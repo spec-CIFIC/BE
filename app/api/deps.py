@@ -5,9 +5,10 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import CificException, UnauthorizedException
 from app.core.security import verify_supabase_token
 from app.db.database import AsyncSessionLocal
+from app.exception.constant.common import CommonErrorCode
+from app.exception.exception import CificException
 from app.models.orm import User
 
 bearer_scheme = HTTPBearer(auto_error=False)
@@ -23,7 +24,7 @@ async def get_current_user(
     db: AsyncSession = Depends(get_db),
 ) -> User:
     if not credentials:
-        raise UnauthorizedException("인증이 필요합니다.")
+        raise CificException(CommonErrorCode.UNAUTHORIZED)
 
     payload = verify_supabase_token(credentials.credentials)
     supabase_uid = payload.get("sub")

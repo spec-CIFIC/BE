@@ -5,7 +5,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_db, get_optional_user
-from app.core.exceptions import NotFoundException
+from app.exception.constant.question import QuestionErrorCode
+from app.exception.exception import CificException
 from app.models.orm import Questions, User
 from app.models.schemas import QuestionsResponse
 
@@ -26,5 +27,5 @@ async def get_question(
     )
     question = result.scalar_one_or_none()
     if not question:
-        raise NotFoundException("문제를 찾을 수 없습니다.")
+        raise CificException(QuestionErrorCode.QUESTION_NOT_FOUND)
     return question

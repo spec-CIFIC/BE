@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from app.api.v1.router import api_router
-from app.core.exceptions import register_exception_handlers
+from app.exception.handler import register_exception_handlers
 
 app = FastAPI(
     title="CIFIC API",

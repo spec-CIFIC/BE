@@ -1,7 +1,8 @@
 import jwt
 
 from app.core.config import settings
-from app.core.exceptions import ExpiredTokenException, InvalidTokenException
+from app.exception.constant.auth import AuthErrorCode
+from app.exception.exception import CificException
 
 
 def verify_supabase_token(token: str) -> dict:
@@ -14,6 +15,6 @@ def verify_supabase_token(token: str) -> dict:
         )
         return payload
     except jwt.ExpiredSignatureError:
-        raise ExpiredTokenException("토큰이 만료되었습니다.")
+        raise CificException(AuthErrorCode.EXPIRED_TOKEN)
     except jwt.InvalidTokenError:
-        raise InvalidTokenException("유효하지 않은 토큰입니다.")
+        raise CificException(AuthErrorCode.INVALID_TOKEN)
