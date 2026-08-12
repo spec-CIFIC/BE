@@ -1,0 +1,43 @@
+# 스키마 관리 규칙
+
+Supabase + Alembic 기반 스키마 변경 절차 및 이력.
+
+> 스키마 변경은 반드시 아래 순서를 따른다. Supabase 대시보드에서 직접 테이블/컬럼을 추가하지 않는다.
+
+## 변경 절차
+
+1. **`app/models/orm.py` 수정** — ORM 모델에 컬럼/테이블 추가·수정
+2. **`docs/ERD/MVP_ERD.md` 동기화** — DBML과 관련 섹션 업데이트
+3. **마이그레이션 파일 생성**
+   ```bash
+   alembic revision --autogenerate -m "변경 내용 설명"
+   ```
+4. **마이그레이션 적용**
+   ```bash
+   alembic upgrade head
+   ```
+5. **이 문서(SCHEMA_MANAGEMENT.md) 마이그레이션 이력 업데이트**
+6. **Supabase 대시보드 Table Editor에서 결과 확인**
+
+## 롤백 방법
+
+```bash
+# 한 단계 되돌리기
+alembic downgrade -1
+
+# 특정 버전으로 되돌리기
+alembic downgrade <revision_id>
+```
+
+## 마이그레이션 이력
+
+| 파일 | 내용 |
+|---|---|
+| `c0b1684d857f_init_tables.py` | 초기 8개 테이블 생성 |
+| `9a423ea7e48c_add_supabase_uid_to_user_nullable_.py` | USER.supabase_uid 추가, USER.subjectId nullable 변경 |
+
+## 주의 사항
+
+- Supabase 대시보드에서 직접 스키마를 바꾸면 `orm.py`와 불일치가 생긴다. **반드시 코드 → DB 방향으로만 변경한다.**
+- 컬럼 삭제·이름 변경은 `--autogenerate`가 감지하지 못하는 경우가 있다. 마이그레이션 파일 생성 후 내용을 직접 확인한다.
+- 운영 DB에 `upgrade` 전에 마이그레이션 파일 내용을 반드시 검토한다.

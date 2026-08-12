@@ -1,0 +1,13 @@
+.env
+.env.local
+.env.*
+.DS_Store
+__pycache__/
+.ipynb_checkpoints/
+.pytest_cache/
+.vscode/
+*.pyc
+*.pkl
+.mcp.json
+.mcp/settings.json
+.claude/settings.local.json

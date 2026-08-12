@@ -5,9 +5,11 @@
 ## 개요
 
 - 목적: 문제 출제 / 풀이 기록 / 약점 진단 / 오답노트를 지탱하는 최소 데이터 정의.
-- DBMS 가정: 관계형 DB (MySQL/PostgreSQL 등). `id`는 auto-increment PK.
+- DBMS: PostgreSQL (Supabase 호스팅). `id`는 auto-increment PK.
 - 익명 사용자 지원: 로그인 전에도 문제를 풀 수 있고, 로그인 시 익명 세션을 계정에 병합한다.
 - 이 문서는 확정된 MVP 스키마다. 확장 항목은 `보류/확장 예정` 섹션 참고.
+
+> 스키마 변경 절차 및 마이그레이션 이력 → [SCHEMA_MANAGEMENT.md](./SCHEMA_MANAGEMENT.md)
 
 ## 엔티티 요약
 
@@ -52,14 +54,15 @@ Table ANON_SESSION {
 }
 
 Table USER {
-  id          bigint       [pk, increment]
-  email       varchar(100) [unique, not null]
-  password    varchar(255) [null, note: '소셜 로그인 시 null 가능']
-  name        varchar(50)  [not null]
-  provider    varchar(20)  [null, note: 'LOCAL / GOOGLE / KAKAO']
-  subjectId   bigint       [not null, ref: > SUBJECT.id]
-  createdAt   datetime     [not null]
-  updatedAt   datetime     [not null]
+  id            bigint       [pk, increment]
+  supabase_uid  varchar(36)  [unique, null, note: 'Supabase auth.users.id (UUID). 로그인 시 유저 식별']
+  email         varchar(100) [unique, not null]
+  password      varchar(255) [null, note: '소셜 로그인 시 null 가능']
+  name          varchar(50)  [not null]
+  provider      varchar(20)  [null, note: 'LOCAL / GOOGLE / KAKAO']
+  subjectId     bigint       [null, ref: > SUBJECT.id, note: '첫 로그인 시 null, 과목 선택 후 채워짐']
+  createdAt     datetime     [not null]
+  updatedAt     datetime     [not null]
 }
 
 Table SUBJECT {
