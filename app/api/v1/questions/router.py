@@ -1,31 +1,31 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Depends, Query
 
-from app.api.deps import get_db, get_optional_user
-from app.exception.constant.question import QuestionErrorCode
-from app.exception.exception import CificException
-from app.models.orm import Questions, User
+from app.api.deps import get_current_user, get_optional_user, get_question_service
+from app.models.orm import User
 from app.models.schemas import QuestionsResponse
+from app.services.question import QuestionService
 
 router = APIRouter(prefix="/questions", tags=["questions"])
+
+
+@router.get("", response_model=list[QuestionsResponse])
+async def get_questions(
+    subject_id: Optional[int] = Query(None),
+    concept_id: Optional[int] = Query(None),
+    limit: int = Query(20, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    _current_user: Optional[User] = Depends(get_optional_user),
+    question_service: QuestionService = Depends(get_question_service),
+):
+    return await question_service.list_questions(subject_id, concept_id, limit, offset)
 
 
 @router.get("/{question_id}", response_model=QuestionsResponse)
 async def get_question(
     question_id: int,
-    db: AsyncSession = Depends(get_db),
     _current_user: Optional[User] = Depends(get_optional_user),
+    question_service: QuestionService = Depends(get_question_service),
 ):
-    result = await db.execute(
-        select(Questions).where(
-            Questions.id == question_id,
-            Questions.status == "APPROVED",
-        )
-    )
-    question = result.scalar_one_or_none()
-    if not question:
-        raise CificException(QuestionErrorCode.QUESTION_NOT_FOUND)
-    return question
+    return await question_service.get_question(question_id)
