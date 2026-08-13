@@ -64,11 +64,15 @@ class QuestionsResponse(QuestionsBase):
 class UserBase(BaseModel):
     email: EmailStr
     name: str
-    subjectId: Optional[int] = None
+    subjectId: int
 
 
 class UserCreate(UserBase):
     password: str
+
+
+class RegisterRequest(BaseModel):
+    subjectId: int
 
 
 class UserUpdate(BaseModel):
@@ -164,6 +168,61 @@ class WrongnoteResponse(WrongnoteBase):
 
     class Config:
         from_attributes = True
+
+
+# ===== INTRO (입문자 플로우) =====
+class IntroSessionResponse(BaseModel):
+    sessionToken: str
+    expiresAt: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class SelfDiagnosisRequest(BaseModel):
+    weakConceptIds: list[int]
+
+
+class DiagnosticQuestionResponse(BaseModel):
+    """진단 테스트용 문제 응답 — answerIndex/explanation 미노출"""
+    id: int
+    subjectId: int
+    conceptId: int
+    stem: str
+    choices: list[str]
+
+    class Config:
+        from_attributes = True
+
+
+class IntroAttemptRequest(BaseModel):
+    questionId: int
+    selectedIndex: int
+    durationMs: Optional[int] = None
+
+
+class IntroAttemptResponse(BaseModel):
+    id: int
+    isCorrect: bool
+    explanation: Optional[str] = None
+
+
+class ConceptWeakItem(BaseModel):
+    conceptId: int
+    conceptName: str
+
+
+class ConceptResultItem(BaseModel):
+    conceptId: int
+    conceptName: str
+    correct: int
+    total: int
+    accuracy: float
+
+
+class IntroReportResponse(BaseModel):
+    predictedWeak: list[ConceptWeakItem]
+    actualResults: list[ConceptResultItem]
 
 
 # ===== API 통합 응답 DTO =====

@@ -160,6 +160,15 @@ BE/
 
 ---
 
+## FE 연동 문서
+
+BE API가 추가·변경될 때 `docs/fe-integration.md`를 함께 업데이트한다.
+
+- 인증 헤더 규칙, localStorage 키, 에러 코드 처리 등 Swagger에 없는 계약을 다룬다
+- 새 API 추가 시: 엔드포인트 사용법·에러 처리를 해당 문서에 반영
+
+---
+
 ## 오픈 이슈
 
 - LLM: 시작 API 벤더 확정 (Anthropic vs OpenAI), 임베딩 모델 확정

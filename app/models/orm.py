@@ -121,7 +121,7 @@ class User(Base):
 
     # provider : 'LOCAL' / 'GOOGLE' / 'KAKAO' 등
     provider = Column(String(20), nullable=True)
-    subjectId = Column(BigInteger, ForeignKey("SUBJECT.id"), nullable=True)
+    subjectId = Column(BigInteger, ForeignKey("SUBJECT.id"), nullable=False)
 
     createdAt = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
@@ -151,6 +151,9 @@ class AnonSession(Base):
     # 로그인 시 이 익명 세션을 병합할 유저를 가리키는 FK.
     # nullable=True : 아직 로그인 전이면 null입니다.
     mergedUserId = Column(BigInteger, ForeignKey("USER.id"), nullable=True)
+
+    # 입문자 자가진단 데이터. {"weakConceptIds": [3, 7, 12]} 형태로 저장.
+    self_diagnosis = Column(JSON, nullable=True)
 
     # foreign_keys=[mergedUserId] :
     #   AnonSession → User 방향의 FK가 여러 개 생길 가능성에 대비해 명시합니다.

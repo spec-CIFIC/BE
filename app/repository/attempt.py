@@ -27,3 +27,24 @@ class AttemptRepository:
         await self.db.commit()
         await self.db.refresh(attempt)
         return attempt
+
+    async def create_for_anon(
+        self,
+        anon_session_id: int,
+        question_id: int,
+        selected_index: int,
+        is_correct: bool,
+        duration_ms: int | None,
+    ) -> Attempt:
+        # POST /intro/attempts — 익명 세션 풀이 제출
+        attempt = Attempt(
+            anonSessionId=anon_session_id,
+            questionId=question_id,
+            selectedIndex=selected_index,
+            isCorrect=is_correct,
+            durationMs=duration_ms,
+        )
+        self.db.add(attempt)
+        await self.db.commit()
+        await self.db.refresh(attempt)
+        return attempt

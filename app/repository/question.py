@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.orm import Questions
@@ -25,6 +25,24 @@ class QuestionRepository:
         if concept_id is not None:
             stmt = stmt.where(Questions.conceptId == concept_id)
         stmt = stmt.order_by(Questions.id).offset(offset).limit(limit)
+        result = await self.db.execute(stmt)
+        return list(result.scalars().all())
+
+    async def find_approved_by_concepts(
+        self, concept_ids: list[int], limit: int
+    ) -> list[Questions]:
+        # GET /intro/questions — 자가진단 개념 기반 진단 문제 랜덤 조회
+        if not concept_ids:
+            return []
+        stmt = (
+            select(Questions)
+            .where(
+                Questions.status == "APPROVED",
+                Questions.conceptId.in_(concept_ids),
+            )
+            .order_by(func.random())
+            .limit(limit)
+        )
         result = await self.db.execute(stmt)
         return list(result.scalars().all())
 

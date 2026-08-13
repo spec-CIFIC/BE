@@ -1,22 +1,27 @@
+from datetime import datetime, timezone
 from typing import AsyncGenerator, Optional
 
-from fastapi import Depends
+from fastapi import Depends, Header
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import verify_supabase_token
 from app.db.database import AsyncSessionLocal
 from app.exception.constant.common import CommonErrorCode
+from app.exception.constant.intro import IntroErrorCode
 from app.exception.exception import CificException
-from app.models.orm import User
+from app.models.orm import AnonSession, User
+from app.repository.anon_session import AnonSessionRepository
 from app.repository.attempt import AttemptRepository
+from app.repository.concept import ConceptRepository
 from app.repository.question import QuestionRepository
 from app.repository.subject import SubjectRepository
 from app.repository.user import UserRepository
-from app.services.attempt import AttemptService
-from app.services.question import QuestionService
-from app.services.subject import SubjectService
-from app.services.user import UserService
+from app.services.v1.attempt import AttemptService
+from app.services.v1.intro import IntroService
+from app.services.v1.question import QuestionService
+from app.services.v1.subject import SubjectService
+from app.services.v1.user import UserService
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -71,6 +76,25 @@ def get_subject_service(
     return SubjectService(repo)
 
 
+def get_anon_session_repository(
+    db: AsyncSession = Depends(get_db),
+) -> AnonSessionRepository:
+    return AnonSessionRepository(db)
+
+
+def get_concept_repository(db: AsyncSession = Depends(get_db)) -> ConceptRepository:
+    return ConceptRepository(db)
+
+
+def get_intro_service(
+    anon_session_repo: AnonSessionRepository = Depends(get_anon_session_repository),
+    question_repo: QuestionRepository = Depends(get_question_repository),
+    attempt_repo: AttemptRepository = Depends(get_attempt_repository),
+    concept_repo: ConceptRepository = Depends(get_concept_repository),
+) -> IntroService:
+    return IntroService(anon_session_repo, question_repo, attempt_repo, concept_repo)
+
+
 # ── 인증 의존성 ────────────────────────────────────────────────
 
 async def get_current_user(
@@ -80,7 +104,24 @@ async def get_current_user(
     if not credentials:
         raise CificException(CommonErrorCode.UNAUTHORIZED)
     payload = verify_supabase_token(credentials.credentials)
-    return await user_service.get_or_create_from_token(payload)
+    return await user_service.get_from_token(payload)
+
+
+async def get_anon_session(
+    x_session_token: Optional[str] = Header(None, alias="X-Session-Token"),
+    anon_session_repo: AnonSessionRepository = Depends(get_anon_session_repository),
+) -> AnonSession:
+    if not x_session_token:
+        raise CificException(IntroErrorCode.SESSION_TOKEN_REQUIRED)
+    session = await anon_session_repo.find_by_token(x_session_token)
+    if not session:
+        raise CificException(IntroErrorCode.INVALID_SESSION)
+    expires_at = session.expiresAt
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if expires_at < datetime.now(timezone.utc):
+        raise CificException(IntroErrorCode.SESSION_EXPIRED)
+    return session
 
 
 async def get_optional_user(
@@ -91,6 +132,6 @@ async def get_optional_user(
         return None
     try:
         payload = verify_supabase_token(credentials.credentials)
-        return await user_service.get_or_create_from_token(payload)
+        return await user_service.get_from_token(payload)
     except CificException:
         return None

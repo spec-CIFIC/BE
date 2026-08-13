@@ -13,3 +13,12 @@ class SubjectRepository:
         # 트래픽 증가 시 캐싱 도입 여지 있음
         result = await self.db.execute(select(Subject))
         return list(result.scalars().all())
+
+    async def find_by_ids(self, ids: list[int]) -> list[Subject]:
+        # GET /intro/report predictedWeak 구성 — 자가진단 과목 ID로 과목 정보 조회
+        if not ids:
+            return []
+        result = await self.db.execute(
+            select(Subject).where(Subject.id.in_(ids))
+        )
+        return list(result.scalars().all())

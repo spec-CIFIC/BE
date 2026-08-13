@@ -24,8 +24,9 @@ class UserRepository:
         email: str,
         name: str,
         provider: str,
+        subject_id: int,
     ) -> User:
-        # 소셜 로그인 최초 1회 호출
+        # POST /auth/register — 회원가입 시 최초 1회 호출 (subjectId 필수)
         # 동시 요청으로 같은 supabase_uid가 중복 INSERT되면 IntegrityError 발생
         # → 충돌 시 이미 생성된 유저를 재조회해 반환 (TOCTOU 방어)
         user = User(
@@ -33,6 +34,7 @@ class UserRepository:
             email=email,
             name=name,
             provider=provider,
+            subjectId=subject_id,
         )
         self.db.add(user)
         try:

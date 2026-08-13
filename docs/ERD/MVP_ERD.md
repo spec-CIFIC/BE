@@ -46,11 +46,12 @@
 
 ```dbml
 Table ANON_SESSION {
-  id           bigint       [pk, increment]
-  sessionToken varchar(100) [unique, not null, note: '브라우저에 저장되는 임시 토큰']
-  createdAt    datetime     [not null]
-  expiresAt    datetime     [not null, note: '만료 시각 (예: 24시간)']
-  mergedUserId bigint       [null, ref: > USER.id, note: '로그인 시 병합된 유저']
+  id             bigint       [pk, increment]
+  sessionToken   varchar(100) [unique, not null, note: '브라우저에 저장되는 임시 토큰']
+  createdAt      datetime     [not null]
+  expiresAt      datetime     [not null, note: '만료 시각 (7일)']
+  mergedUserId   bigint       [null, ref: > USER.id, note: '로그인 시 병합된 유저']
+  self_diagnosis json         [null, note: '자가진단 데이터. {"weakConceptIds": [3, 7, 12]}']
 }
 
 Table USER {
@@ -60,7 +61,7 @@ Table USER {
   password      varchar(255) [null, note: '소셜 로그인 시 null 가능']
   name          varchar(50)  [not null]
   provider      varchar(20)  [null, note: 'LOCAL / GOOGLE / KAKAO']
-  subjectId     bigint       [null, ref: > SUBJECT.id, note: '첫 로그인 시 null, 과목 선택 후 채워짐']
+  subjectId     bigint       [not null, ref: > SUBJECT.id, note: '회원가입 시 필수 선택']
   createdAt     datetime     [not null]
   updatedAt     datetime     [not null]
 }

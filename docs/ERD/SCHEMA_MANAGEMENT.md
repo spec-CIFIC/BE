@@ -35,6 +35,8 @@ alembic downgrade <revision_id>
 |---|---|
 | `c0b1684d857f_init_tables.py` | 초기 8개 테이블 생성 |
 | `9a423ea7e48c_add_supabase_uid_to_user_nullable_.py` | USER.supabase_uid 추가, USER.subjectId nullable 변경 |
+| `bc2f51645b18_add_self_diagnosis_to_anon_session.py` | ANON_SESSION.self_diagnosis JSON 컬럼 추가 (입문자 자가진단 저장) |
+| `953a90357d89_user_subjectid_not_null.py` | USER.subjectId NOT NULL 변경 (회원가입 시 과목 필수 선택) |
 
 ## 주의 사항
 
