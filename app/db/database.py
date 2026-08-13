@@ -7,23 +7,9 @@ from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
+from app.core.config import settings
 
-# ─────────────────────────────────────────────────────────────
-# 1. 연결 URL (Spring의 spring.datasource.url 에 해당)
-# ─────────────────────────────────────────────────────────────
-# 형식: "드라이버+비동기드라이버:///경로"
-#
-# [로컬 개발 — SQLite]
-#   sqlite+aiosqlite:///./cific.db
-#   - sqlite     : DB 종류 (Spring H2와 유사. 파일 하나로 동작, 서버 불필요)
-#   - aiosqlite  : SQLite의 비동기(async) 드라이버
-#   - ///./      : 현재 실행 디렉토리(BE/) 기준 상대경로
-#   - cific.db   : 생성될 DB 파일명 (처음 실행 시 자동 생성)
-#
-# [운영 — PostgreSQL로 교체할 때]
-#   postgresql+asyncpg://유저:비밀번호@호스트:5432/DB이름
-#   (requirements.txt에 asyncpg 추가 필요)
-DATABASE_URL = "sqlite+aiosqlite:///./cific.db"
+DATABASE_URL = settings.DATABASE_URL
 
 
 # ─────────────────────────────────────────────────────────────

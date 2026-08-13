@@ -1,0 +1,12 @@
+name: cific
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.11.13
+  - pip=25.1
+  - pip:
+      - -r requirements.txt
+      - -r requirements-dev.txt

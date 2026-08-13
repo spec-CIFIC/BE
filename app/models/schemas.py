@@ -64,7 +64,7 @@ class QuestionsResponse(QuestionsBase):
 class UserBase(BaseModel):
     email: EmailStr
     name: str
-    subjectId: int
+    subjectId: Optional[int] = None
 
 
 class UserCreate(UserBase):
@@ -73,7 +73,7 @@ class UserCreate(UserBase):
 
 class UserUpdate(BaseModel):
     name: Optional[str] = None
-    password: Optional[str] = None
+    subjectId: Optional[int] = None
 
 
 class UserResponse(UserBase):

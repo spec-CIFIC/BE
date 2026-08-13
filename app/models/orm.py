@@ -109,6 +109,10 @@ class User(Base):
     __tablename__ = "USER"
 
     id = Column(BigInteger, primary_key=True, autoincrement=True)
+
+    # Supabase Auth의 auth.users.id (UUID). 로그인 시 유저 식별에 사용.
+    supabase_uid = Column(String(36), unique=True, nullable=True)
+
     email = Column(String(100), unique=True, nullable=False)
 
     # nullable=True : 소셜 로그인 사용자는 비밀번호가 없으므로 null 허용
@@ -117,7 +121,7 @@ class User(Base):
 
     # provider : 'LOCAL' / 'GOOGLE' / 'KAKAO' 등
     provider = Column(String(20), nullable=True)
-    subjectId = Column(BigInteger, ForeignKey("SUBJECT.id"), nullable=False)
+    subjectId = Column(BigInteger, ForeignKey("SUBJECT.id"), nullable=True)
 
     createdAt = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
