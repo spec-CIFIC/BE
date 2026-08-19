@@ -48,8 +48,8 @@
 Table ANON_SESSION {
   id             bigint       [pk, increment]
   sessionToken   varchar(100) [unique, not null, note: '브라우저에 저장되는 임시 토큰']
-  createdAt      datetime     [not null]
-  expiresAt      datetime     [not null, note: '만료 시각 (7일)']
+  createdAt      timestamptz  [not null]
+  expiresAt      timestamptz  [not null, note: '만료 시각 (7일)']
   mergedUserId   bigint       [null, ref: > USER.id, note: '로그인 시 병합된 유저']
   self_diagnosis json         [null, note: '자가진단 데이터. {"weakConceptIds": [3, 7, 12]}']
 }
@@ -62,8 +62,8 @@ Table USER {
   name          varchar(50)  [not null]
   provider      varchar(20)  [null, note: 'LOCAL / GOOGLE / KAKAO']
   subjectId     bigint       [not null, ref: > SUBJECT.id, note: '회원가입 시 필수 선택']
-  createdAt     datetime     [not null]
-  updatedAt     datetime     [not null]
+  createdAt     timestamptz  [not null]
+  updatedAt     timestamptz  [not null]
 }
 
 Table SUBJECT {
@@ -81,7 +81,7 @@ Table QUESTIONS {
   explanation text         [null, note: '해설']
   status      varchar(20)  [not null, default: 'PENDING', note: 'PENDING / APPROVED / HUMAN_REVIEW / REJECTED']
   trustScore  float        [null, note: '검증 파이프라인 종합 신뢰도 (0~1). 라우팅 기준값']
-  createdAt   datetime     [not null]
+  createdAt   timestamptz  [not null]
 }
 
 Table ATTEMPT {
@@ -92,7 +92,7 @@ Table ATTEMPT {
   selectedIndex int         [not null, note: '사용자가 고른 번호']
   isCorrect     boolean     [not null]
   durationMs    int         [null, note: '소요 시간(ms)']
-  createdAt     datetime    [not null]
+  createdAt     timestamptz [not null]
 }
 
 Table CONCEPT {
@@ -107,7 +107,7 @@ Table MASTERY {
   conceptId   bigint       [not null, ref: > CONCEPT.id]
   score       float        [not null, note: '0~1 숙련도']
   sampleSize  int          [not null, note: '표본 수, 진단 신뢰도용']
-  updatedAt   datetime     [not null]
+  updatedAt   timestamptz  [not null]
 }
 
 Table WRONGNOTE {
@@ -117,7 +117,7 @@ Table WRONGNOTE {
   conceptId   bigint       [not null, ref: > CONCEPT.id]
   mistakeType text         [null, note: '실수 유형: 잔존가치_누락 등 (AI 판정)']
   userMemo    text         [null, note: '사용자가 해당 문제에 직접 쓰는 메모']
-  reviewDueAt datetime     [null, note: '복습 시점(간격 반복용)']
+  reviewDueAt timestamptz  [null, note: '복습 시점(간격 반복용)']
 }
 ```
 

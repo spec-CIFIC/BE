@@ -6,7 +6,6 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str
     SUPABASE_URL: str
-    SUPABASE_JWT_SECRET: str
 
 
 settings = Settings()

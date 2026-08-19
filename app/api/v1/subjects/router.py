@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 
 from app.api.deps import get_subject_service
 from app.models.schemas import SubjectResponse
-from app.services.subject import SubjectService
+from app.services.v1.subject import SubjectService
 
 router = APIRouter(prefix="/subjects", tags=["subjects"])
 

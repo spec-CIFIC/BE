@@ -95,7 +95,7 @@ class Questions(Base):
 
     # default=lambda: datetime.now(timezone.utc) : INSERT 시 현재 시각을 자동으로 채웁니다.
     # Spring의 @CreationTimestamp에 해당합니다.
-    createdAt = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    createdAt = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
 
     subject = relationship("Subject", back_populates="questions")
     concept = relationship("Concept", back_populates="questions")
@@ -123,11 +123,11 @@ class User(Base):
     provider = Column(String(20), nullable=True)
     subjectId = Column(BigInteger, ForeignKey("SUBJECT.id"), nullable=False)
 
-    createdAt = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    createdAt = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
 
     # onupdate=lambda: datetime.now(timezone.utc) : UPDATE 시 현재 시각으로 자동 갱신됩니다.
     # Spring의 @UpdateTimestamp에 해당합니다.
-    updatedAt = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    updatedAt = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     subject = relationship("Subject", back_populates="users")
     attempts = relationship("Attempt", back_populates="user", lazy="selectin")
@@ -145,8 +145,8 @@ class AnonSession(Base):
 
     # unique=True : 같은 토큰이 두 개 존재하면 안 되므로 유니크 제약
     sessionToken = Column(String(100), unique=True, nullable=False)
-    createdAt = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
-    expiresAt = Column(DateTime, nullable=False)
+    createdAt = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
+    expiresAt = Column(DateTime(timezone=True), nullable=False)
 
     # 로그인 시 이 익명 세션을 병합할 유저를 가리키는 FK.
     # nullable=True : 아직 로그인 전이면 null입니다.
@@ -182,7 +182,7 @@ class Attempt(Base):
 
     # nullable=True : 소요 시간을 측정하지 않은 경우 null 허용
     durationMs = Column(Integer, nullable=True)
-    createdAt = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    createdAt = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
 
     user = relationship("User", back_populates="attempts", foreign_keys=[userId])
     anon_session = relationship("AnonSession", back_populates="attempts", foreign_keys=[anonSessionId])
@@ -206,7 +206,7 @@ class Mastery(Base):
     # 진단 신뢰도 계산에 사용하는 표본 수 (풀이 기록 누적 횟수)
     sampleSize = Column(Integer, nullable=False)
 
-    updatedAt = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    updatedAt = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     user = relationship("User", back_populates="masteries")
     concept = relationship("Concept", back_populates="masteries")
@@ -230,7 +230,7 @@ class Wrongnote(Base):
     userMemo = Column(Text, nullable=True)
 
     # 간격 반복 학습을 위한 복습 예정 시각
-    reviewDueAt = Column(DateTime, nullable=True)
+    reviewDueAt = Column(DateTime(timezone=True), nullable=True)
 
     user = relationship("User", back_populates="wrongnotes")
     attempt = relationship("Attempt", back_populates="wrongnotes")
