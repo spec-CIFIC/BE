@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from app.api.deps import get_attempt_service, get_current_user
 from app.models.orm import User
 from app.models.schemas import AttemptBase, AttemptResponse
-from app.services.attempt import AttemptService
+from app.services.v1.attempt import AttemptService
 
 router = APIRouter(prefix="/attempts", tags=["attempts"])
 

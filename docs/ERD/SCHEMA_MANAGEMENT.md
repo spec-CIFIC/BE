@@ -37,6 +37,7 @@ alembic downgrade <revision_id>
 | `9a423ea7e48c_add_supabase_uid_to_user_nullable_.py` | USER.supabase_uid 추가, USER.subjectId nullable 변경 |
 | `bc2f51645b18_add_self_diagnosis_to_anon_session.py` | ANON_SESSION.self_diagnosis JSON 컬럼 추가 (입문자 자가진단 저장) |
 | `953a90357d89_user_subjectid_not_null.py` | USER.subjectId NOT NULL 변경 (회원가입 시 과목 필수 선택) |
+| `7dc2f2c87fa4_alter_datetime_columns_to_timestamptz.py` | 전체 datetime 컬럼 TIMESTAMP → TIMESTAMPTZ 변경 (timezone-aware 저장) |
 
 ## 주의 사항
 

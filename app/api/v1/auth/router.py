@@ -10,8 +10,8 @@ from app.api.deps import (
 from app.core.security import verify_supabase_token
 from app.models.orm import AnonSession, User
 from app.models.schemas import RegisterRequest, UserResponse
-from app.services.intro import IntroService
-from app.services.user import UserService
+from app.services.v1.intro import IntroService
+from app.services.v1.user import UserService
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 bearer_scheme = HTTPBearer(auto_error=False)

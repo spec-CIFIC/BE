@@ -10,7 +10,7 @@ from app.models.schemas import (
     IntroSessionResponse,
     SelfDiagnosisRequest,
 )
-from app.services.intro import IntroService
+from app.services.v1.intro import IntroService
 
 router = APIRouter(prefix="/intro", tags=["intro"])
 

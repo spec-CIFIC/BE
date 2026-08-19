@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Query
 from app.api.deps import get_current_user, get_optional_user, get_question_service
 from app.models.orm import User
 from app.models.schemas import QuestionsResponse
-from app.services.question import QuestionService
+from app.services.v1.question import QuestionService
 
 router = APIRouter(prefix="/questions", tags=["questions"])
 

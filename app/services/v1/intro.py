@@ -61,6 +61,7 @@ class IntroService:
             raise CificException(QuestionErrorCode.QUESTION_NOT_FOUND)
 
         is_correct = body.selectedIndex == question.answerIndex
+
         attempt = await self.attempt_repo.create_for_anon(
             anon_session_id=session.id,
             question_id=body.questionId,
