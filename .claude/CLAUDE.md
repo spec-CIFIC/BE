@@ -13,6 +13,8 @@
 @.claude/plans/v2_reliability.md
 @.claude/plans/v3_flywheel.md
 
+> 시안(design/index_cific.html)과 현재 백엔드의 상이점 목록 → @.claude/design_gaps.md
+
 ---
 
 ## 프로젝트 개요

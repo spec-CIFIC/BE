@@ -32,6 +32,15 @@ class AnonSessionRepository:
         )
         return result.scalar_one_or_none()
 
+    async def set_subject(
+        self, session: AnonSession, subject_id: int
+    ) -> AnonSession:
+        # POST /intro/subject — 입문자가 선택한 시험 과목을 세션에 저장
+        session.subjectId = subject_id
+        await self.db.commit()
+        await self.db.refresh(session)
+        return session
+
     async def update_self_diagnosis(
         self, session: AnonSession, weak_concept_ids: list[int]
     ) -> AnonSession:

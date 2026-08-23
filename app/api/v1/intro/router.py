@@ -6,9 +6,11 @@ from app.models.schemas import (
     DiagnosticQuestionResponse,
     IntroAttemptRequest,
     IntroAttemptResponse,
+    IntroConceptResponse,
     IntroReportResponse,
     IntroSessionResponse,
     SelfDiagnosisRequest,
+    SubjectSelectRequest,
 )
 from app.services.v1.intro import IntroService
 
@@ -19,6 +21,25 @@ router = APIRouter(prefix="/intro", tags=["intro"])
 async def create_session(intro_service: IntroService = Depends(get_intro_service)):
     """익명 세션을 생성하고 sessionToken을 반환한다."""
     return await intro_service.create_session()
+
+
+@router.post("/subject", status_code=204)
+async def select_subject(
+    body: SubjectSelectRequest,
+    session: AnonSession = Depends(get_anon_session),
+    intro_service: IntroService = Depends(get_intro_service),
+):
+    """입문자가 선택한 시험 과목을 세션에 저장한다."""
+    await intro_service.select_subject(session, body.subjectId)
+
+
+@router.get("/concepts", response_model=list[IntroConceptResponse])
+async def get_concepts(
+    session: AnonSession = Depends(get_anon_session),
+    intro_service: IntroService = Depends(get_intro_service),
+):
+    """선택한 과목의 개념 목록을 반환한다 (약점 선택용)."""
+    return await intro_service.get_concepts(session)
 
 
 @router.post("/self-diagnosis", status_code=204)
