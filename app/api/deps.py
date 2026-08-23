@@ -14,10 +14,12 @@ from app.models.orm import AnonSession, User
 from app.repository.anon_session import AnonSessionRepository
 from app.repository.attempt import AttemptRepository
 from app.repository.concept import ConceptRepository
+from app.repository.home import HomeRepository
 from app.repository.question import QuestionRepository
 from app.repository.subject import SubjectRepository
 from app.repository.user import UserRepository
 from app.services.v1.attempt import AttemptService
+from app.services.v1.home import HomeService
 from app.services.v1.intro import IntroService
 from app.services.v1.question import QuestionService
 from app.services.v1.subject import SubjectService
@@ -93,6 +95,17 @@ def get_intro_service(
     concept_repo: ConceptRepository = Depends(get_concept_repository),
 ) -> IntroService:
     return IntroService(anon_session_repo, question_repo, attempt_repo, concept_repo)
+
+
+def get_home_repository(db: AsyncSession = Depends(get_db)) -> HomeRepository:
+    return HomeRepository(db)
+
+
+def get_home_service(
+    home_repo: HomeRepository = Depends(get_home_repository),
+    user_repo: UserRepository = Depends(get_user_repository),
+) -> HomeService:
+    return HomeService(home_repo, user_repo)
 
 
 # ── 인증 의존성 ────────────────────────────────────────────────

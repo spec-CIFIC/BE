@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from typing import Optional
 from pydantic import BaseModel, EmailStr
 
@@ -46,6 +46,8 @@ class QuestionsBase(BaseModel):
     choices: list[str]
     answerIndex: int
     explanation: Optional[str] = None
+    questionType: str = "CALCULATION"
+    isAiGenerated: bool = True
 
 
 class QuestionsCreate(QuestionsBase):
@@ -78,11 +80,16 @@ class RegisterRequest(BaseModel):
 class UserUpdate(BaseModel):
     name: Optional[str] = None
     subjectId: Optional[int] = None
+    examName: Optional[str] = None
+    examDate: Optional[date] = None
 
 
 class UserResponse(UserBase):
     id: int
     provider: Optional[str] = None
+    examName: Optional[str] = None
+    examDate: Optional[date] = None
+    streakCount: int = 0
     createdAt: datetime
     updatedAt: datetime
 
@@ -179,6 +186,19 @@ class IntroSessionResponse(BaseModel):
         from_attributes = True
 
 
+class SubjectSelectRequest(BaseModel):
+    subjectId: int
+
+
+class IntroConceptResponse(BaseModel):
+    """과목 선택 후 약점 선택용 개념 목록"""
+    id: int
+    conceptName: str
+
+    class Config:
+        from_attributes = True
+
+
 class SelfDiagnosisRequest(BaseModel):
     weakConceptIds: list[int]
 
@@ -223,6 +243,30 @@ class ConceptResultItem(BaseModel):
 class IntroReportResponse(BaseModel):
     predictedWeak: list[ConceptWeakItem]
     actualResults: list[ConceptResultItem]
+
+
+# ===== HOME (홈화면) =====
+class HomeUserInfo(BaseModel):
+    name: str
+    streakCount: int
+
+
+class HomeExamGoal(BaseModel):
+    examName: str
+    examDate: date
+    dDay: int
+
+
+class HomeReviewQueue(BaseModel):
+    reviewConceptCount: int
+    wrongNoteCount: int
+
+
+class HomeResponse(BaseModel):
+    user: HomeUserInfo
+    examGoal: Optional[HomeExamGoal]
+    reviewQueue: HomeReviewQueue
+    dailyStrategy: str
 
 
 # ===== API 통합 응답 DTO =====
