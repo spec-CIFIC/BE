@@ -38,6 +38,9 @@ alembic downgrade <revision_id>
 | `bc2f51645b18_add_self_diagnosis_to_anon_session.py` | ANON_SESSION.self_diagnosis JSON 컬럼 추가 (입문자 자가진단 저장) |
 | `953a90357d89_user_subjectid_not_null.py` | USER.subjectId NOT NULL 변경 (회원가입 시 과목 필수 선택) |
 | `7dc2f2c87fa4_alter_datetime_columns_to_timestamptz.py` | 전체 datetime 컬럼 TIMESTAMP → TIMESTAMPTZ 변경 (timezone-aware 저장) |
+| `a1b2c3d4e5f6_add_subject_to_anon_session.py` | ANON_SESSION.subjectId 추가 (입문자 과목 선택 선행 단계 저장, FK→SUBJECT, nullable) |
+| `ccc6193aa22a_add_home_fields_to_user_and_question_type.py` | USER에 examName·examDate·streakCount·lastStudiedAt 추가, QUESTIONS에 questionType 추가 (홈화면 D-Day·streak·문제 유형 필터용) |
+| `faa3eb159683_refactor_question_type_add_is_ai_generated.py` | questionType 값 정리(GENERATED→CALCULATION, PAST_EXAM→CALCULATION), isAiGenerated Boolean 컬럼 추가 (문제 형식과 출처를 분리) |
 
 ## 주의 사항
 
