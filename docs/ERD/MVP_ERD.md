@@ -30,6 +30,7 @@
 - `SUBJECT` 1 — N `QUESTIONS`
 - `CONCEPT` 1 — N `QUESTIONS`
 - `USER` 1 — N `ATTEMPT`, `MASTERY`, `WRONGNOTE`
+- `SUBJECT` 1 — N `ANON_SESSION` (입문자 선택 과목)
 - `ANON_SESSION` 1 — N `ATTEMPT`
 - `QUESTIONS` 1 — N `ATTEMPT`
 - `ATTEMPT` 1 — N `WRONGNOTE`
@@ -50,6 +51,7 @@ Table ANON_SESSION {
   sessionToken   varchar(100) [unique, not null, note: '브라우저에 저장되는 임시 토큰']
   createdAt      timestamptz  [not null]
   expiresAt      timestamptz  [not null, note: '만료 시각 (7일)']
+  subjectId      bigint       [null, ref: > SUBJECT.id, note: '입문자가 선택한 시험 과목 (과목→개념 선행 선택)']
   mergedUserId   bigint       [null, ref: > USER.id, note: '로그인 시 병합된 유저']
   self_diagnosis json         [null, note: '자가진단 데이터. {"weakConceptIds": [3, 7, 12]}']
 }
@@ -62,6 +64,10 @@ Table USER {
   name          varchar(50)  [not null]
   provider      varchar(20)  [null, note: 'LOCAL / GOOGLE / KAKAO']
   subjectId     bigint       [not null, ref: > SUBJECT.id, note: '회원가입 시 필수 선택']
+  examName      varchar(100) [null, note: '목표 시험명 (예: 2027 CPA 1차). 홈 D-Day 카드용']
+  examDate      date         [null, note: '목표 시험일. D-Day 계산 기준']
+  streakCount   int          [not null, default: 0, note: '현재 연속 학습일수']
+  lastStudiedAt date         [null, note: '마지막 학습일. streak 연속 여부 판단에 사용']
   createdAt     timestamptz  [not null]
   updatedAt     timestamptz  [not null]
 }
@@ -72,16 +78,18 @@ Table SUBJECT {
 }
 
 Table QUESTIONS {
-  id          bigint       [pk, increment]
-  subjectId   bigint       [not null, ref: > SUBJECT.id]
-  conceptId   bigint       [not null, ref: > CONCEPT.id]
-  stem        text         [not null, note: '문제 내용']
-  choices     json         [not null, note: '선택지 배열']
-  answerIndex int          [not null, note: '정답 번호']
-  explanation text         [null, note: '해설']
-  status      varchar(20)  [not null, default: 'PENDING', note: 'PENDING / APPROVED / HUMAN_REVIEW / REJECTED']
-  trustScore  float        [null, note: '검증 파이프라인 종합 신뢰도 (0~1). 라우팅 기준값']
-  createdAt   timestamptz  [not null]
+  id           bigint       [pk, increment]
+  subjectId    bigint       [not null, ref: > SUBJECT.id]
+  conceptId    bigint       [not null, ref: > CONCEPT.id]
+  stem         text         [not null, note: '문제 내용']
+  choices      json         [not null, note: '선택지 배열']
+  answerIndex  int          [not null, note: '정답 번호']
+  explanation  text         [null, note: '해설']
+  questionType  varchar(20)  [not null, default: 'CALCULATION', note: 'VERBAL(말문제·서술형) / CALCULATION(계산문제·수식 적용형)']
+  isAiGenerated boolean      [not null, default: true, note: 'true=AI 생성 / false=기출(인간 출제)']
+  status        varchar(20)  [not null, default: 'PENDING', note: 'PENDING / APPROVED / HUMAN_REVIEW / REJECTED']
+  trustScore   float        [null, note: '검증 파이프라인 종합 신뢰도 (0~1). 라우팅 기준값']
+  createdAt    timestamptz  [not null]
 }
 
 Table ATTEMPT {
@@ -102,12 +110,14 @@ Table CONCEPT {
 }
 
 Table MASTERY {
-  id          bigint       [pk, increment]
-  userId      bigint       [not null, ref: > USER.id]
-  conceptId   bigint       [not null, ref: > CONCEPT.id]
-  score       float        [not null, note: '0~1 숙련도']
-  sampleSize  int          [not null, note: '표본 수, 진단 신뢰도용']
-  updatedAt   timestamptz  [not null]
+  id           bigint       [pk, increment]
+  userId       bigint       [not null, ref: > USER.id]
+  conceptId    bigint       [not null, ref: > CONCEPT.id]
+  score        float        [not null, note: '0~1 숙련도']
+  sampleSize   int          [not null, note: '표본 수, 진단 신뢰도용']
+  reviewStage  int          [not null, note: '에빙하우스 단계(정답 +1 / 오답 0)']
+  nextReviewAt timestamptz  [null, note: '다음 복습 예정 시각(간격 반복). /review/concepts due 기준']
+  updatedAt    timestamptz  [not null]
 }
 
 Table WRONGNOTE {
@@ -118,6 +128,17 @@ Table WRONGNOTE {
   mistakeType text         [null, note: '실수 유형: 잔존가치_누락 등 (AI 판정)']
   userMemo    text         [null, note: '사용자가 해당 문제에 직접 쓰는 메모']
   reviewDueAt timestamptz  [null, note: '복습 시점(간격 반복용)']
+}
+
+Table STUDY_PLAN {
+  id         bigint       [pk, increment]
+  userId     bigint       [not null, ref: > USER.id]
+  conceptId  bigint       [not null, ref: > CONCEPT.id]
+  createdAt  timestamptz  [not null]
+
+  indexes {
+    (userId, conceptId) [unique, name: 'uq_study_plan_user_concept']
+  }
 }
 ```
 

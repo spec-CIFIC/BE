@@ -1,0 +1,2743 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+>
+<title>CIFIC · 입문 진단</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        ink: '#17233D',
+        navy: '#24375F',
+        sub: '#71809A',
+        bg: '#F4F8FF',
+        card: '#FFF',
+        blue: '#78A5F4',
+        blueDeep: '#4D79D8',
+        blueSoft: '#EAF2FF',
+        line: '#E0E8F4'
+      },
+      boxShadow: {
+        card: '0 6px 24px rgba(56,89,145,.075)',
+        soft: '0 12px 40px rgba(56,89,145,.09)'
+      }
+    }
+  }
+};
+</script>
+
+<style>
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      135deg,
+      #dcecff 0%,
+      #edf5ff 45%,
+      #d9eaff 100%
+    );
+
+  color: #17233D;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "SF Pro Text",
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  -webkit-font-smoothing: antialiased;
+}
+
+
+/* =========================================================
+   DEVICE
+========================================================= */
+
+.device {
+  width: 100%;
+  height: 100vh;
+
+  max-width: 430px;
+  max-height: 932px;
+
+  margin: 0 auto;
+
+  position: relative;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f4f8ff 0%,
+      #edf5ff 48%,
+      #e7f0ff 100%
+    );
+}
+
+@media (min-width: 640px) {
+  .device {
+    height: 850px;
+
+    margin: 32px auto;
+
+    border: 10px solid #182033;
+
+    border-radius: 46px;
+
+    box-shadow:
+      0 30px 80px rgba(20,35,60,.22);
+  }
+}
+
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+.background-art {
+  position: absolute;
+
+  inset: 0;
+
+  overflow: hidden;
+
+  pointer-events: none;
+
+  z-index: 0;
+}
+
+.background-art::before {
+  content: "";
+
+  position: absolute;
+
+  width: 480px;
+  height: 480px;
+
+  top: -180px;
+  left: -170px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(120,169,247,.30) 0%,
+      rgba(120,169,247,.12) 42%,
+      rgba(120,169,247,0) 72%
+    );
+
+  filter: blur(8px);
+}
+
+.background-art::after {
+  content: "";
+
+  position: absolute;
+
+  width: 420px;
+  height: 420px;
+
+  right: -230px;
+  top: 70px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(150,191,255,.25) 0%,
+      rgba(150,191,255,.08) 45%,
+      transparent 72%
+    );
+
+  filter: blur(10px);
+}
+
+.ribbon {
+  position: absolute;
+
+  border-radius: 999px;
+
+  transform: rotate(9deg);
+
+  filter: blur(1px);
+
+  opacity: .32;
+}
+
+.ribbon.one {
+  width: 125px;
+  height: 950px;
+
+  left: -55px;
+  top: -50px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(96,146,230,.40),
+      rgba(115,168,246,.15),
+      rgba(82,133,222,.28)
+    );
+}
+
+.ribbon.two {
+  width: 135px;
+  height: 1050px;
+
+  left: 105px;
+  top: -100px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(113,166,245,.26),
+      rgba(80,132,225,.22),
+      rgba(158,195,255,.16)
+    );
+
+  transform: rotate(8deg);
+}
+
+.ribbon.three {
+  width: 150px;
+  height: 1100px;
+
+  left: 255px;
+  top: -100px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(78,132,225,.22),
+      rgba(119,171,246,.10),
+      rgba(75,126,219,.20)
+    );
+
+  transform: rotate(9deg);
+}
+
+.ribbon.four {
+  width: 145px;
+  height: 1000px;
+
+  right: -55px;
+  top: -70px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(119,170,245,.28),
+      rgba(78,132,222,.14),
+      rgba(148,190,255,.18)
+    );
+
+  transform: rotate(10deg);
+}
+
+.circle-shape {
+  position: absolute;
+
+  border-radius: 50%;
+
+  background: rgba(255,255,255,.22);
+
+  filter: blur(1px);
+}
+
+.circle-shape.one {
+  width: 180px;
+  height: 180px;
+
+  top: 55px;
+  left: -85px;
+}
+
+.circle-shape.two {
+  width: 210px;
+  height: 210px;
+
+  top: -30px;
+  right: -85px;
+
+  background: rgba(255,255,255,.26);
+}
+
+.circle-shape.three {
+  width: 260px;
+  height: 260px;
+
+  top: 230px;
+  right: -130px;
+
+  background: rgba(255,255,255,.20);
+}
+
+.background-dot {
+  position: absolute;
+
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+
+  background: rgba(255,255,255,.35);
+
+  filter: blur(2px);
+}
+
+
+/* =========================================================
+   STATUS BAR
+========================================================= */
+
+.status-bar {
+  position: relative;
+
+  z-index: 20;
+
+  width: 100%;
+  height: 44px;
+
+  padding:
+    0
+    24px
+    4px;
+
+  display: flex;
+
+  align-items: flex-end;
+
+  justify-content: space-between;
+
+  font-size: 12px;
+
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   APP AREA
+========================================================= */
+
+.app-area {
+  position: absolute;
+
+  top: 44px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  z-index: 5;
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   SCREEN
+========================================================= */
+
+/*
+  중요:
+  모든 화면은 absolute로 겹쳐 놓는다.
+
+  따라서 화면이 아래로 밀리거나
+  전체 페이지가 스크롤되는 일이 없다.
+*/
+
+.screen {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  padding:
+    8px
+    24px
+    118px;
+
+  display: none;
+
+  flex-direction: column;
+
+  overflow: hidden;
+
+  opacity: 0;
+
+  transform: translateX(10px);
+
+  pointer-events: none;
+}
+
+.screen.active {
+  display: flex;
+
+  opacity: 1;
+
+  transform: translateX(0);
+
+  pointer-events: auto;
+
+  animation:
+    screenIn .22s ease forwards;
+}
+
+@keyframes screenIn {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+
+/* =========================================================
+   PRESS
+========================================================= */
+
+.press {
+  transition:
+    transform .12s ease,
+    opacity .12s ease;
+}
+
+.press:active {
+  transform: scale(.98);
+  opacity: .85;
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.brand-row {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+}
+
+.brand-mark {
+  width: 23px;
+  height: 23px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #79A8F5,
+      #4D79D8
+    );
+
+  color: #fff;
+
+  font-size: 13px;
+
+  box-shadow:
+    0 4px 10px rgba(77,121,216,.20);
+}
+
+.brand-name {
+  font-size: 14px;
+
+  font-weight: 800;
+
+  letter-spacing: -.3px;
+
+  color: #24375F;
+}
+
+.brand-large {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.brand-large .brand-mark {
+  width: 48px;
+  height: 48px;
+
+  border-radius: 15px;
+
+  font-size: 25px;
+}
+
+.brand-large .brand-name {
+  font-size: 26px;
+
+  letter-spacing: -.8px;
+}
+
+
+/* =========================================================
+   PAGE TEXT
+========================================================= */
+
+.page-kicker {
+  margin:
+    8px
+    0
+    4px;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  letter-spacing: .25px;
+
+  color: #4D79D8;
+}
+
+.page-title {
+  margin: 0;
+
+  font-size: 28px;
+
+  line-height: 1.18;
+
+  font-weight: 800;
+
+  letter-spacing: -.8px;
+}
+
+.page-subtitle {
+  margin:
+    8px
+    0
+    0;
+
+  color: #71809A;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   WELCOME
+========================================================= */
+
+.welcome-screen {
+  padding-top: 22px;
+
+  padding-bottom: 28px;
+}
+
+.hero-copy {
+  margin-top: 88px;
+}
+
+.hero-title {
+  margin:
+    12px
+    0
+    0;
+
+  font-size: 30px;
+
+  line-height: 1.25;
+
+  letter-spacing: -1.1px;
+
+  font-weight: 800;
+}
+
+.hero-description {
+  margin:
+    12px
+    0
+    0;
+
+  color: #71809A;
+
+  font-size: 15px;
+
+  line-height: 1.6;
+}
+
+.welcome-actions {
+  margin-top: auto;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+.action-btn {
+  width: 100%;
+
+  height: 58px;
+
+  border: 0;
+
+  border-radius: 17px;
+
+  background: #4D79D8;
+
+  color: #fff;
+
+  font-size: 17px;
+
+  font-weight: 800;
+
+  box-shadow:
+    0 10px 24px rgba(77,121,216,.20);
+
+  cursor: pointer;
+}
+
+.action-btn.secondary {
+  background: rgba(255,255,255,.92);
+
+  color: #17233D;
+
+  border:
+    1px solid #E0E8F4;
+
+  box-shadow: none;
+}
+
+.action-btn:disabled {
+  cursor: default;
+}
+
+
+/* =========================================================
+   CHOICE
+========================================================= */
+
+.choice-list {
+  display: grid;
+
+  gap: 14px;
+
+  margin-top: 22px;
+
+  overflow: hidden;
+}
+
+.choice {
+  width: 100%;
+
+  min-height: 72px;
+
+  border:
+    1px solid rgba(255,255,255,.95);
+
+  border-radius: 20px;
+
+  background:
+    rgba(255,255,255,.78);
+
+  box-shadow:
+    0 6px 24px rgba(56,89,145,.075);
+
+  display: flex;
+
+  align-items: center;
+
+  padding:
+    0
+    20px;
+
+  text-align: left;
+
+  color: #17233D;
+
+  font-size: 16px;
+
+  font-weight: 750;
+
+  cursor: pointer;
+
+  backdrop-filter: blur(18px);
+
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.choice.selected {
+  background: #EAF2FF;
+
+  border-color: #78A5F4;
+
+  box-shadow:
+    0 8px 24px rgba(77,121,216,.12);
+}
+
+.choice .check {
+  margin-left: auto;
+
+  width: 24px;
+  height: 24px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  display: none;
+
+  align-items: center;
+  justify-content: center;
+
+  background: #4D79D8;
+
+  color: #fff;
+
+  font-size: 14px;
+}
+
+.choice.selected .check {
+  display: flex;
+}
+
+
+/* =========================================================
+   QUESTION
+========================================================= */
+
+.progress-row {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  color: #71809A;
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+.progress-track {
+  flex: 1;
+
+  height: 7px;
+
+  border-radius: 999px;
+
+  background: #E7EDF7;
+
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: #4D79D8;
+}
+
+.question-card,
+.result-card {
+  margin-top: 22px;
+
+  padding: 19px;
+
+  border-radius: 20px;
+
+  background:
+    rgba(255,255,255,.84);
+
+  border:
+    1px solid rgba(255,255,255,.95);
+
+  box-shadow:
+    0 6px 24px rgba(56,89,145,.075);
+
+  backdrop-filter: blur(18px);
+
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.question-text {
+  margin:
+    25px
+    0
+    18px;
+
+  font-size: 18px;
+
+  line-height: 1.55;
+
+  font-weight: 750;
+
+  letter-spacing: -.35px;
+}
+
+.answer-list {
+  display: grid;
+
+  gap: 12px;
+}
+
+.answer {
+  width: 100%;
+
+  min-height: 62px;
+
+  padding:
+    14px
+    16px;
+
+  border-radius: 18px;
+
+  border:
+    1px solid #E0E8F4;
+
+  background:
+    rgba(255,255,255,.90);
+
+  text-align: left;
+
+  color: #17233D;
+
+  font-size: 14px;
+
+  line-height: 1.45;
+
+  cursor: pointer;
+}
+
+.answer.correct {
+  border-color: #4D79D8;
+
+  background: #EAF2FF;
+}
+
+.answer.wrong {
+  border-color: #D85B62;
+
+  background: #FFF0F0;
+}
+
+.answer:disabled {
+  cursor: default;
+}
+
+.explanation {
+  display: none;
+
+  margin-top: 14px;
+
+  padding: 16px;
+
+  border-radius: 17px;
+
+  border:
+    1px solid #E0E8F4;
+
+  background:
+    rgba(255,255,255,.64);
+
+  color: #17233D;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+}
+
+.explanation.show {
+  display: block;
+}
+
+.explanation-label {
+  margin-bottom: 5px;
+
+  color: #71809A;
+
+  font-size: 12px;
+
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   RESULT
+========================================================= */
+
+.result-top {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+}
+
+.result-name {
+  font-size: 16px;
+
+  font-weight: 800;
+}
+
+.result-percent {
+  font-size: 18px;
+
+  font-weight: 800;
+
+  color: #4D79D8;
+}
+
+.result-percent.weak {
+  color: #D85B62;
+}
+
+.result-count {
+  margin-top: 7px;
+
+  color: #71809A;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   SIGN UP
+========================================================= */
+
+.signup-form {
+  margin-top: 28px;
+
+  display: grid;
+
+  gap: 12px;
+}
+
+.input {
+  width: 100%;
+
+  height: 54px;
+
+  border-radius: 17px;
+
+  border:
+    1px solid #E0E8F4;
+
+  outline: none;
+
+  padding:
+    0
+    17px;
+
+  background:
+    rgba(255,255,255,.88);
+
+  color: #17233D;
+
+  font-size: 15px;
+
+  box-shadow:
+    0 6px 24px rgba(56,89,145,.045);
+}
+
+.input:focus {
+  border-color: #78A5F4;
+
+  box-shadow:
+    0 0 0 3px rgba(120,165,244,.12);
+}
+
+
+/* =========================================================
+   FIXED FOOTER
+========================================================= */
+
+.screen-footer {
+  position: absolute;
+
+  left: 24px;
+  right: 24px;
+
+  bottom: 18px;
+
+  z-index: 100;
+
+  display: flex;
+
+  flex-direction: column;
+
+  pointer-events: none;
+}
+
+.screen-footer::before {
+  content: "";
+
+  position: absolute;
+
+  left: -24px;
+  right: -24px;
+
+  bottom: -18px;
+
+  height: 125px;
+
+  z-index: -1;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(237,245,255,0),
+      rgba(237,245,255,.82) 42%,
+      rgba(237,245,255,.98) 100%
+    );
+}
+
+.screen-footer > * {
+  pointer-events: auto;
+}
+
+.screen-footer.hidden {
+  display: none;
+}
+
+.muted-action {
+  background: #dce5f4;
+
+  color: #fff;
+
+  box-shadow: none;
+}
+
+.bottom-note {
+  margin-top: 13px;
+
+  text-align: center;
+
+  color: #71809A;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast {
+  position: absolute;
+
+  left: 50%;
+
+  bottom: 100px;
+
+  transform:
+    translate(-50%,12px);
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition:
+    opacity .22s ease,
+    transform .22s ease;
+
+  z-index: 200;
+
+  white-space: nowrap;
+
+  background: #24375F;
+
+  color: #fff;
+
+  padding:
+    10px
+    14px;
+
+  border-radius: 12px;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  box-shadow:
+    0 10px 30px rgba(18,32,58,.18);
+}
+
+.toast.show {
+  opacity: 1;
+
+  transform:
+    translate(-50%,0);
+}
+
+
+/* =========================================================
+   SMALL SCREEN
+========================================================= */
+
+@media (max-height: 700px) {
+
+  .hero-copy {
+    margin-top: 48px;
+  }
+
+  .hero-title {
+    font-size: 27px;
+  }
+
+  .hero-description {
+    font-size: 14px;
+  }
+
+  .choice {
+    min-height: 62px;
+  }
+
+  .choice-list {
+    gap: 9px;
+  }
+
+  .question-card,
+  .result-card {
+    margin-top: 14px;
+  }
+
+}
+</style>
+</head>
+
+
+<body>
+
+<div class="device">
+
+  <!-- =====================================================
+       BACKGROUND
+  ====================================================== -->
+
+  <div class="background-art">
+
+    <div class="ribbon one"></div>
+    <div class="ribbon two"></div>
+    <div class="ribbon three"></div>
+    <div class="ribbon four"></div>
+
+    <div class="circle-shape one"></div>
+    <div class="circle-shape two"></div>
+    <div class="circle-shape three"></div>
+
+    <div
+      class="background-dot"
+      style="top:180px;left:70px"
+    ></div>
+
+    <div
+      class="background-dot"
+      style="top:420px;right:70px"
+    ></div>
+
+    <div
+      class="background-dot"
+      style="top:700px;left:180px"
+    ></div>
+
+  </div>
+
+
+  <!-- =====================================================
+       STATUS BAR
+  ====================================================== -->
+
+  <div class="status-bar">
+
+    <span>9:41</span>
+
+    <div class="flex items-center gap-1.5">
+
+      <i class="ph-fill ph-cell-signal-full"></i>
+
+      <i class="ph-fill ph-wifi-high"></i>
+
+      <i class="ph-fill ph-battery-full text-[16px]"></i>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       APP AREA
+  ====================================================== -->
+
+  <div class="app-area">
+
+
+    <!-- ===================================================
+         STEP 0
+    ==================================================== -->
+
+    <section
+      class="screen active welcome-screen"
+      id="screen-welcome"
+    >
+
+      <div>
+
+        <div class="brand-large">
+
+          <div class="brand-mark">
+            🐬
+          </div>
+
+          <span class="brand-name">
+            CIFIC
+          </span>
+
+        </div>
+
+
+        <div class="hero-copy">
+
+          <div class="page-kicker">
+            CPA LEARNING PARTNER
+          </div>
+
+          <h1 class="hero-title">
+            약점만 골라 문제로,<br>
+            자동 오답노트까지
+          </h1>
+
+          <p class="hero-description">
+            AI가 학습 상태를 분석하고<br>
+            지금 필요한 문제부터 추천해 드려요.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="welcome-actions">
+
+        <button
+          type="button"
+          class="action-btn press"
+          id="btn-first-user"
+        >
+          처음 이용해요
+        </button>
+
+        <button
+          type="button"
+          class="action-btn secondary press"
+          id="btn-existing-user"
+        >
+          기존 회원이에요
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         STEP 1 : EXAM
+    ==================================================== -->
+
+    <section
+      class="screen"
+      id="screen-exam"
+    >
+
+      <div>
+
+        <div class="brand-row">
+
+          <div class="brand-mark">
+            🐬
+          </div>
+
+          <span class="brand-name">
+            CIFIC
+          </span>
+
+        </div>
+
+        <div class="page-kicker">
+          GET STARTED
+        </div>
+
+        <h1 class="page-title">
+          어떤 시험을 준비하세요?
+        </h1>
+
+        <p class="page-subtitle">
+          준비 중인 과목을 선택하면 맞춤 진단을 시작해요.
+        </p>
+
+      </div>
+
+
+      <div class="choice-list">
+
+        <button
+          type="button"
+          class="choice press exam-choice"
+          data-value="재무회계"
+        >
+          <span>재무회계</span>
+
+          <span class="check">
+            <i class="ph-bold ph-check"></i>
+          </span>
+        </button>
+
+
+        <button
+          type="button"
+          class="choice press exam-choice"
+          data-value="세법"
+        >
+          <span>세법</span>
+
+          <span class="check">
+            <i class="ph-bold ph-check"></i>
+          </span>
+        </button>
+
+
+        <button
+          type="button"
+          class="choice press exam-choice"
+          data-value="원가관리회계"
+        >
+          <span>원가관리회계</span>
+
+          <span class="check">
+            <i class="ph-bold ph-check"></i>
+          </span>
+        </button>
+
+
+        <button
+          type="button"
+          class="choice press exam-choice"
+          data-value="재무관리"
+        >
+          <span>재무관리</span>
+
+          <span class="check">
+            <i class="ph-bold ph-check"></i>
+          </span>
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         STEP 2 : WEAK
+    ==================================================== -->
+
+    <section
+      class="screen"
+      id="screen-weak"
+    >
+
+      <div>
+
+        <div class="page-kicker">
+          PERSONAL DIAGNOSIS
+        </div>
+
+        <h1 class="page-title">
+          어떤 부분이 약한가요?
+        </h1>
+
+        <p class="page-subtitle">
+          약한 개념을 선택하면 맞춤 진단 문제를 드려요.<br>
+          (복수 선택 가능)
+        </p>
+
+      </div>
+
+
+      <div class="choice-list">
+
+        <button
+          type="button"
+          class="choice press weak-choice"
+          data-value="화폐의시간가치"
+        >
+          <span>화폐의시간가치</span>
+
+          <span class="check">
+            <i class="ph-bold ph-check"></i>
+          </span>
+        </button>
+
+
+        <button
+          type="button"
+          class="choice press weak-choice"
+          data-value="자본예산"
+        >
+          <span>자본예산</span>
+
+          <span class="check">
+            <i class="ph-bold ph-check"></i>
+          </span>
+        </button>
+
+
+        <button
+          type="button"
+          class="choice press weak-choice"
+          data-value="포트폴리오이론"
+        >
+          <span>포트폴리오이론</span>
+
+          <span class="check">
+            <i class="ph-bold ph-check"></i>
+          </span>
+        </button>
+
+
+        <button
+          type="button"
+          class="choice press weak-choice"
+          data-value="자본구조"
+        >
+          <span>자본구조</span>
+
+          <span class="check">
+            <i class="ph-bold ph-check"></i>
+          </span>
+        </button>
+
+
+        <button
+          type="button"
+          class="choice press weak-choice"
+          data-value="옵션가치평가"
+        >
+          <span>옵션가치평가</span>
+
+          <span class="check">
+            <i class="ph-bold ph-check"></i>
+          </span>
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         STEP 3 : QUESTION
+    ==================================================== -->
+
+    <section
+      class="screen"
+      id="screen-question"
+    >
+
+      <div>
+
+        <div class="progress-row">
+
+          <span>
+            1 / 2
+          </span>
+
+          <div class="progress-track">
+
+            <div
+              class="progress-fill"
+              style="width:50%"
+            ></div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="question-card">
+
+        <div class="page-kicker">
+          DIAGNOSTIC QUESTION
+        </div>
+
+        <div class="question-text">
+          [자본구조] 다음 중 자본구조에 관한 설명으로 옳지 않은 것은?
+        </div>
+
+
+        <div class="answer-list">
+
+          <button
+            type="button"
+            class="answer press"
+            data-correct="false"
+          >
+            1. 자본구조의 기본 개념에 부합하는 설명이다.
+          </button>
+
+
+          <button
+            type="button"
+            class="answer press"
+            data-correct="false"
+          >
+            2. 자본구조의 인식·측정 기준을 바르게 적용한 설명이다.
+          </button>
+
+
+          <button
+            type="button"
+            class="answer press"
+            data-correct="true"
+          >
+            3. 자본구조의 회계처리 원칙과 일치하는 설명이다.
+          </button>
+
+
+          <button
+            type="button"
+            class="answer press"
+            data-correct="false"
+          >
+            4. 자본구조의 기준서 규정과 명백히 어긋나는 설명이다.
+          </button>
+
+        </div>
+
+
+        <div
+          class="explanation"
+          id="explanation"
+        >
+
+          <div class="explanation-label">
+            해설
+          </div>
+
+          4번은 자본구조 관련 기준을 잘못 적용한 서술이므로 옳지 않습니다.
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         STEP 4 : RESULT
+    ==================================================== -->
+
+    <section
+      class="screen"
+      id="screen-result"
+    >
+
+      <div>
+
+        <div class="page-kicker">
+          DIAGNOSIS RESULT
+        </div>
+
+        <h1 class="page-title">
+          진단 결과
+        </h1>
+
+        <p class="page-subtitle">
+          풀이 결과를 바탕으로 약점을 분석했어요.
+        </p>
+
+      </div>
+
+
+      <div class="result-card">
+
+        <div class="result-top">
+
+          <span class="result-name">
+            CVP분석
+          </span>
+
+          <span class="result-percent">
+            50%
+          </span>
+
+        </div>
+
+        <div class="progress-track mt-3">
+
+          <div
+            class="progress-fill"
+            style="width:50%"
+          ></div>
+
+        </div>
+
+        <div class="result-count">
+          1 / 2 정답
+        </div>
+
+      </div>
+
+
+      <div class="result-card">
+
+        <div class="result-top">
+
+          <span class="result-name">
+            자본구조
+          </span>
+
+          <span class="result-percent weak">
+            0%
+          </span>
+
+        </div>
+
+        <div class="progress-track mt-3">
+
+          <div
+            class="progress-fill"
+            style="
+              width:0%;
+              background:#D85B62;
+            "
+          ></div>
+
+        </div>
+
+        <div class="result-count">
+          0 / 2 정답
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         STEP 5 : SIGNUP
+    ==================================================== -->
+
+    <section
+      class="screen"
+      id="screen-signup"
+    >
+
+      <div>
+
+        <div class="page-kicker">
+          CIFIC
+        </div>
+
+        <h1 class="page-title">
+          회원가입
+        </h1>
+
+        <p class="page-subtitle">
+          진단 결과와 맞춤 학습 데이터를 저장해 볼까요?
+        </p>
+
+      </div>
+
+
+      <div class="signup-form">
+
+        <input
+          class="input"
+          id="signup-name"
+          type="text"
+          placeholder="이름"
+          autocomplete="name"
+        >
+
+        <input
+          class="input"
+          id="signup-email"
+          type="email"
+          placeholder="이메일"
+          autocomplete="email"
+        >
+
+        <input
+          class="input"
+          id="signup-password"
+          type="password"
+          placeholder="비밀번호"
+          autocomplete="new-password"
+        >
+
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         FIXED FOOTER
+    ==================================================== -->
+
+    <div
+      class="screen-footer hidden"
+      id="screen-footer"
+    >
+
+      <button
+        type="button"
+        id="footer-button"
+        class="action-btn press"
+      >
+        다음
+      </button>
+
+      <div
+        id="footer-note"
+        class="bottom-note"
+      >
+        이미 계정이 있어요
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================
+         TOAST
+    ==================================================== -->
+
+    <div
+      class="toast"
+      id="toast"
+    ></div>
+
+  </div>
+
+</div>
+
+
+<script>
+/* =========================================================
+   CIFIC ONBOARDING
+   ---------------------------------------------------------
+   페이지 전환 로직을 처음부터 단순화함.
+
+   0 = welcome
+   1 = exam
+   2 = weak
+   3 = question
+   4 = result
+   5 = signup
+========================================================= */
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+const state = {
+  currentStep: 0,
+
+  selectedExam: null,
+
+  selectedWeakPoints: [],
+
+  questionAnswered: false,
+
+  questionCorrect: false
+};
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const screens = {
+  welcome: document.getElementById('screen-welcome'),
+  exam: document.getElementById('screen-exam'),
+  weak: document.getElementById('screen-weak'),
+  question: document.getElementById('screen-question'),
+  result: document.getElementById('screen-result'),
+  signup: document.getElementById('screen-signup')
+};
+
+const footer = document.getElementById('screen-footer');
+
+const footerButton =
+  document.getElementById('footer-button');
+
+const footerNote =
+  document.getElementById('footer-note');
+
+const toastElement =
+  document.getElementById('toast');
+
+
+/* =========================================================
+   STEP NAME
+========================================================= */
+
+const stepNames = [
+  'welcome',
+  'exam',
+  'weak',
+  'question',
+  'result',
+  'signup'
+];
+
+
+/* =========================================================
+   SHOW SCREEN
+   ---------------------------------------------------------
+   가장 중요한 부분.
+
+   기존 코드에서는 showStep()과 currentStep이
+   여러 곳에서 분산되어 관리됐음.
+
+   이제 모든 화면 전환은 오직 이 함수만 사용.
+========================================================= */
+
+function showScreen(step) {
+
+  /*
+    범위 방어
+  */
+
+  if (
+    typeof step !== 'number' ||
+    step < 0 ||
+    step >= stepNames.length
+  ) {
+    return;
+  }
+
+
+  /*
+    현재 단계 변경
+  */
+
+  state.currentStep = step;
+
+
+  /*
+    모든 화면 숨기기
+  */
+
+  Object.values(screens).forEach(screen => {
+
+    if (!screen) {
+      return;
+    }
+
+    screen.classList.remove('active');
+
+  });
+
+
+  /*
+    현재 화면 찾기
+  */
+
+  const targetName =
+    stepNames[step];
+
+  const targetScreen =
+    screens[targetName];
+
+
+  /*
+    화면 존재 여부 확인
+  */
+
+  if (!targetScreen) {
+
+    console.error(
+      '화면을 찾을 수 없습니다:',
+      targetName
+    );
+
+    return;
+
+  }
+
+
+  /*
+    현재 화면 표시
+  */
+
+  targetScreen.classList.add('active');
+
+
+  /*
+    footer 갱신
+  */
+
+  updateFooter();
+
+
+  /*
+    디버깅용 로그
+
+    개발 중 브라우저 Console에서
+    실제로 페이지가 전환되는지 확인 가능.
+  */
+
+  console.log(
+    '[CIFIC] 화면 전환:',
+    step,
+    targetName
+  );
+
+}
+
+
+/* =========================================================
+   NEXT
+========================================================= */
+
+function goNext() {
+
+  const step =
+    state.currentStep;
+
+
+  /* -----------------------------------------------
+     EXAM
+  ------------------------------------------------ */
+
+  if (step === 1) {
+
+    if (!state.selectedExam) {
+
+      showToast(
+        '준비 중인 시험을 선택해 주세요.'
+      );
+
+      return;
+
+    }
+
+    showScreen(2);
+
+    return;
+  }
+
+
+  /* -----------------------------------------------
+     WEAK
+  ------------------------------------------------ */
+
+  if (step === 2) {
+
+    showScreen(3);
+
+    return;
+  }
+
+
+  /* -----------------------------------------------
+     QUESTION
+  ------------------------------------------------ */
+
+  if (step === 3) {
+
+    if (!state.questionAnswered) {
+
+      showToast(
+        '정답을 선택해 주세요.'
+      );
+
+      return;
+
+    }
+
+    showScreen(4);
+
+    return;
+  }
+
+
+  /* -----------------------------------------------
+     RESULT
+  ------------------------------------------------ */
+
+  if (step === 4) {
+
+    showScreen(5);
+
+    return;
+  }
+
+
+  /* -----------------------------------------------
+     SIGNUP
+  ------------------------------------------------ */
+
+  if (step === 5) {
+
+    completeSignup();
+
+    return;
+  }
+
+}
+
+
+/* =========================================================
+   WELCOME
+========================================================= */
+
+/*
+  처음 이용해요
+  ↓
+  무조건 exam 화면으로 이동
+*/
+
+document
+  .getElementById('btn-first-user')
+  .addEventListener('click', function(event) {
+
+    event.preventDefault();
+
+    event.stopPropagation();
+
+    console.log(
+      '[CIFIC] 처음 이용해요 클릭'
+    );
+
+    showScreen(1);
+
+  });
+
+
+/*
+  기존 회원이에요
+
+  현재는 로그인 페이지가 별도로 없으므로
+  일단 회원가입 화면으로 보내지 않고
+  토스트를 표시.
+
+  추후 로그인 화면이 만들어지면
+  여기만 showScreen(...)으로 변경하면 됨.
+*/
+
+document
+  .getElementById('btn-existing-user')
+  .addEventListener('click', function(event) {
+
+    event.preventDefault();
+
+    event.stopPropagation();
+
+    showToast(
+      '기존 회원 로그인 화면을 준비 중이에요.'
+    );
+
+  });
+
+
+/* =========================================================
+   EXAM SELECT
+========================================================= */
+
+document
+  .querySelectorAll('.exam-choice')
+  .forEach(button => {
+
+    button.addEventListener(
+      'click',
+      function(event) {
+
+        event.preventDefault();
+
+        /*
+          모든 시험 선택 해제
+        */
+
+        document
+          .querySelectorAll('.exam-choice')
+          .forEach(item => {
+
+            item.classList.remove(
+              'selected'
+            );
+
+          });
+
+
+        /*
+          현재 선택
+        */
+
+        this.classList.add(
+          'selected'
+        );
+
+
+        /*
+          상태 저장
+        */
+
+        state.selectedExam =
+          this.dataset.value;
+
+
+        console.log(
+          '[CIFIC] 시험 선택:',
+          state.selectedExam
+        );
+
+
+        /*
+          footer 즉시 갱신
+        */
+
+        updateFooter();
+
+      }
+    );
+
+  });
+
+
+/* =========================================================
+   WEAK POINT SELECT
+========================================================= */
+
+document
+  .querySelectorAll('.weak-choice')
+  .forEach(button => {
+
+    button.addEventListener(
+      'click',
+      function(event) {
+
+        event.preventDefault();
+
+
+        /*
+          선택 / 해제
+        */
+
+        this.classList.toggle(
+          'selected'
+        );
+
+
+        const value =
+          this.dataset.value;
+
+
+        /*
+          선택 상태 저장
+        */
+
+        if (
+          this.classList.contains(
+            'selected'
+          )
+        ) {
+
+          if (
+            !state.selectedWeakPoints.includes(
+              value
+            )
+          ) {
+
+            state.selectedWeakPoints.push(
+              value
+            );
+
+          }
+
+        } else {
+
+          state.selectedWeakPoints =
+            state.selectedWeakPoints.filter(
+              item => item !== value
+            );
+
+        }
+
+
+        console.log(
+          '[CIFIC] 약점 선택:',
+          state.selectedWeakPoints
+        );
+
+      }
+    );
+
+  });
+
+
+/* =========================================================
+   QUESTION
+========================================================= */
+
+document
+  .querySelectorAll('.answer')
+  .forEach(answer => {
+
+    answer.addEventListener(
+      'click',
+      function(event) {
+
+        event.preventDefault();
+
+
+        /*
+          이미 풀었다면 다시 선택하지 않음
+        */
+
+        if (
+          state.questionAnswered
+        ) {
+          return;
+        }
+
+
+        state.questionAnswered =
+          true;
+
+
+        const isCorrect =
+          this.dataset.correct === 'true';
+
+
+        state.questionCorrect =
+          isCorrect;
+
+
+        /*
+          모든 답안 비활성화
+        */
+
+        document
+          .querySelectorAll('.answer')
+          .forEach(item => {
+
+            item.disabled = true;
+
+          });
+
+
+        /*
+          현재 선택 답안 표시
+        */
+
+        if (isCorrect) {
+
+          this.classList.add(
+            'correct'
+          );
+
+        } else {
+
+          this.classList.add(
+            'wrong'
+          );
+
+
+          /*
+            실제 정답 표시
+          */
+
+          const correctAnswer =
+            document.querySelector(
+              '.answer[data-correct="true"]'
+            );
+
+
+          if (correctAnswer) {
+
+            correctAnswer.classList.add(
+              'correct'
+            );
+
+          }
+
+        }
+
+
+        /*
+          해설 표시
+        */
+
+        document
+          .getElementById(
+            'explanation'
+          )
+          .classList.add(
+            'show'
+          );
+
+
+        updateFooter();
+
+
+        console.log(
+          '[CIFIC] 문제 답변:',
+          isCorrect
+        );
+
+      }
+    );
+
+  });
+
+
+/* =========================================================
+   FOOTER BUTTON
+========================================================= */
+
+footerButton.addEventListener(
+  'click',
+  function(event) {
+
+    event.preventDefault();
+
+    event.stopPropagation();
+
+    console.log(
+      '[CIFIC] footer 버튼 클릭:',
+      state.currentStep
+    );
+
+    goNext();
+
+  }
+);
+
+
+/* =========================================================
+   FOOTER NOTE
+========================================================= */
+
+footerNote.addEventListener(
+  'click',
+  function(event) {
+
+    event.preventDefault();
+
+    showToast(
+      '로그인 화면을 준비 중이에요.'
+    );
+
+  }
+);
+
+
+/* =========================================================
+   FOOTER UPDATE
+========================================================= */
+
+function updateFooter() {
+
+  const step =
+    state.currentStep;
+
+
+  /*
+    기본값
+  */
+
+  footer.classList.add(
+    'hidden'
+  );
+
+  footerNote.style.display =
+    'none';
+
+  footerButton.classList.remove(
+    'muted-action'
+  );
+
+
+  /* -----------------------------------------------
+     WELCOME
+  ------------------------------------------------ */
+
+  if (step === 0) {
+
+    return;
+
+  }
+
+
+  /*
+    나머지 화면은 footer 표시
+  */
+
+  footer.classList.remove(
+    'hidden'
+  );
+
+
+  /* -----------------------------------------------
+     EXAM
+  ------------------------------------------------ */
+
+  if (step === 1) {
+
+    if (state.selectedExam) {
+
+      footerButton.textContent =
+        '다음';
+
+      footerButton.classList.remove(
+        'muted-action'
+      );
+
+    } else {
+
+      footerButton.textContent =
+        '선택해 주세요';
+
+      footerButton.classList.add(
+        'muted-action'
+      );
+
+    }
+
+    return;
+
+  }
+
+
+  /* -----------------------------------------------
+     WEAK
+  ------------------------------------------------ */
+
+  if (step === 2) {
+
+    footerButton.textContent =
+      '선택 없이 진행하기';
+
+    return;
+
+  }
+
+
+  /* -----------------------------------------------
+     QUESTION
+  ------------------------------------------------ */
+
+  if (step === 3) {
+
+    if (state.questionAnswered) {
+
+      footerButton.textContent =
+        '다음';
+
+      footerButton.classList.remove(
+        'muted-action'
+      );
+
+    } else {
+
+      footerButton.textContent =
+        '정답 선택하기';
+
+      footerButton.classList.add(
+        'muted-action'
+      );
+
+    }
+
+    return;
+
+  }
+
+
+  /* -----------------------------------------------
+     RESULT
+  ------------------------------------------------ */
+
+  if (step === 4) {
+
+    footerButton.textContent =
+      '회원가입하고 계속 학습하기';
+
+    footerNote.textContent =
+      '이미 계정이 있어요';
+
+    footerNote.style.display =
+      'block';
+
+    return;
+
+  }
+
+
+  /* -----------------------------------------------
+     SIGNUP
+  ------------------------------------------------ */
+
+  if (step === 5) {
+
+    footerButton.textContent =
+      '가입 완료';
+
+    return;
+
+  }
+
+}
+
+
+/* =========================================================
+   SIGNUP
+========================================================= */
+
+function completeSignup() {
+
+  const name =
+    document
+      .getElementById(
+        'signup-name'
+      )
+      .value
+      .trim();
+
+  const email =
+    document
+      .getElementById(
+        'signup-email'
+      )
+      .value
+      .trim();
+
+  const password =
+    document
+      .getElementById(
+        'signup-password'
+      )
+      .value
+      .trim();
+
+
+  if (!name) {
+
+    showToast(
+      '이름을 입력해 주세요.'
+    );
+
+    return;
+
+  }
+
+
+  if (!email) {
+
+    showToast(
+      '이메일을 입력해 주세요.'
+    );
+
+    return;
+
+  }
+
+
+  if (!password) {
+
+    showToast(
+      '비밀번호를 입력해 주세요.'
+    );
+
+    return;
+
+  }
+
+
+  showToast(
+    '회원가입이 완료되었습니다.'
+  );
+
+
+  console.log(
+    '[CIFIC] 회원가입 완료'
+  );
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+function showToast(message) {
+
+  toastElement.textContent =
+    message;
+
+  toastElement.classList.add(
+    'show'
+  );
+
+
+  clearTimeout(
+    window.__cificToastTimer
+  );
+
+
+  window.__cificToastTimer =
+    setTimeout(
+      function() {
+
+        toastElement.classList.remove(
+          'show'
+        );
+
+      },
+      1800
+    );
+
+}
+
+
+/* =========================================================
+   KEYBOARD SUPPORT
+========================================================= */
+
+document.addEventListener(
+  'keydown',
+  function(event) {
+
+    /*
+      Enter 키로 현재 화면의
+      다음 버튼 실행
+    */
+
+    if (
+      event.key === 'Enter' &&
+      state.currentStep !== 0
+    ) {
+
+      /*
+        input 입력 중이면 실행하지 않음
+      */
+
+      if (
+        event.target.tagName === 'INPUT'
+      ) {
+        return;
+      }
+
+      goNext();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+(function initialize() {
+
+  /*
+    혹시 HTML의 active 상태가 꼬여 있더라도
+    JS 상태를 기준으로 처음 화면을 확정.
+  */
+
+  Object.values(screens).forEach(
+    screen => {
+
+      if (screen) {
+
+        screen.classList.remove(
+          'active'
+        );
+
+      }
+
+    }
+  );
+
+
+  /*
+    첫 화면 표시
+  */
+
+  showScreen(0);
+
+
+  console.log(
+    '[CIFIC] Onboarding initialized'
+  );
+
+})();
+</script>
+
+</body>
+</html>

@@ -27,7 +27,7 @@ FE 레포 별도 관리 (Next.js + TypeScript)
 
 | 상태 | 작업 |
 |---|---|
-| 🔜 | 익명 세션 발급·병합 → @.claude/plans/v0_auth.md |
+| ✅ | 익명 세션 발급·병합 → @.claude/plans/v0_auth.md |
 
 ## v1으로 이월
 

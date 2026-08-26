@@ -1,0 +1,4724 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0,
+  maximum-scale=1.0, user-scalable=no"
+>
+
+<title>CIFIC · CPA Learning Partner</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        ink: "#17233D",
+        navy: "#24375F",
+        sub: "#71809A",
+        bg: "#F4F8FF",
+        card: "#FFFFFF",
+        blue: "#78A5F4",
+        blueDeep: "#4D79D8",
+        blueSoft: "#EAF2FF",
+        line: "#E0E8F4"
+      },
+
+      boxShadow: {
+        card: "0 6px 24px rgba(56, 89, 145, .075)",
+        soft: "0 12px 40px rgba(56, 89, 145, .09)"
+      }
+    }
+  }
+};
+</script>
+
+<style>
+
+/* =========================================================
+   BASE
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background:
+    linear-gradient(
+      135deg,
+      #dcecff 0%,
+      #edf5ff 45%,
+      #d9eaff 100%
+    );
+
+  color: #17233D;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "SF Pro Text",
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* =========================================================
+   DEVICE
+========================================================= */
+
+.device {
+  width: 100%;
+  max-width: 430px;
+
+  height: 100vh;
+  max-height: 932px;
+
+  margin: auto;
+
+  position: relative;
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f4f8ff 0%,
+      #edf5ff 48%,
+      #e7f0ff 100%
+    );
+}
+
+@media (min-width: 640px) {
+
+  .device {
+    height: 850px;
+
+    margin: 32px auto;
+
+    border:
+      10px solid #182033;
+
+    border-radius: 46px;
+
+    box-shadow:
+      0 30px 80px
+      rgba(20, 35, 60, .22);
+  }
+
+}
+
+
+/* =========================================================
+   BACKGROUND ART
+========================================================= */
+
+.background-art {
+  position: absolute;
+  inset: 0;
+
+  overflow: hidden;
+
+  pointer-events: none;
+
+  z-index: 0;
+}
+
+
+/* Light */
+
+.background-art::before {
+  content: "";
+
+  position: absolute;
+
+  width: 480px;
+  height: 480px;
+
+  top: -180px;
+  left: -170px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(120,169,247,.30) 0%,
+      rgba(120,169,247,.12) 42%,
+      rgba(120,169,247,0) 72%
+    );
+
+  filter: blur(8px);
+}
+
+
+/* Right light */
+
+.background-art::after {
+  content: "";
+
+  position: absolute;
+
+  width: 420px;
+  height: 420px;
+
+  right: -230px;
+  top: 70px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(150,191,255,.25) 0%,
+      rgba(150,191,255,.08) 45%,
+      transparent 72%
+    );
+
+  filter: blur(10px);
+}
+
+
+/* Ribbons */
+
+.ribbon {
+  position: absolute;
+
+  border-radius: 999px;
+
+  transform: rotate(9deg);
+
+  filter: blur(1px);
+
+  opacity: .32;
+}
+
+
+.ribbon.one {
+  width: 125px;
+  height: 950px;
+
+  left: -55px;
+  top: -50px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(96,146,230,.40),
+      rgba(115,168,246,.15),
+      rgba(82,133,222,.28)
+    );
+}
+
+
+.ribbon.two {
+  width: 135px;
+  height: 1050px;
+
+  left: 105px;
+  top: -100px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(113,166,245,.26),
+      rgba(80,132,225,.22),
+      rgba(158,195,255,.16)
+    );
+
+  transform: rotate(8deg);
+}
+
+
+.ribbon.three {
+  width: 150px;
+  height: 1100px;
+
+  left: 255px;
+  top: -100px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(78,132,225,.22),
+      rgba(119,171,246,.10),
+      rgba(75,126,219,.20)
+    );
+
+  transform: rotate(9deg);
+}
+
+
+.ribbon.four {
+  width: 145px;
+  height: 1000px;
+
+  right: -55px;
+  top: -70px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(119,170,245,.28),
+      rgba(78,132,222,.14),
+      rgba(148,190,255,.18)
+    );
+
+  transform: rotate(10deg);
+}
+
+
+/* Circles */
+
+.circle-shape {
+  position: absolute;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255,255,255,.22);
+
+  filter: blur(1px);
+}
+
+
+.circle-shape.one {
+  width: 180px;
+  height: 180px;
+
+  top: 55px;
+  left: -85px;
+}
+
+
+.circle-shape.two {
+  width: 210px;
+  height: 210px;
+
+  top: -30px;
+  right: -85px;
+
+  background:
+    rgba(255,255,255,.26);
+}
+
+
+.circle-shape.three {
+  width: 260px;
+  height: 260px;
+
+  top: 230px;
+  right: -130px;
+
+  background:
+    rgba(255,255,255,.20);
+}
+
+
+.background-dot {
+  position: absolute;
+
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255,255,255,.35);
+
+  filter: blur(2px);
+}
+
+
+/* =========================================================
+   SCREEN
+========================================================= */
+
+.screen-scroll {
+  position: relative;
+
+  z-index: 2;
+
+  height: 100%;
+
+  overflow-y: auto;
+
+  padding-bottom: 108px;
+}
+
+
+/* =========================================================
+   TAB
+========================================================= */
+
+.tab {
+  display: none;
+
+  animation:
+    fade .22s ease;
+}
+
+.tab.active {
+  display: block;
+}
+
+@keyframes fade {
+
+  from {
+    opacity: 0;
+    transform:
+      translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateY(0);
+  }
+
+}
+
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+.soft-card {
+  background:
+    rgba(255,255,255,.88);
+
+  backdrop-filter:
+    blur(18px);
+
+  -webkit-backdrop-filter:
+    blur(18px);
+}
+
+.glass {
+  background:
+    rgba(255,255,255,.84);
+
+  backdrop-filter:
+    blur(22px);
+
+  -webkit-backdrop-filter:
+    blur(22px);
+}
+
+.press {
+  transition:
+    transform .15s ease,
+    opacity .15s ease;
+}
+
+.press:active {
+  transform:
+    scale(.98);
+
+  opacity: .86;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.search-box {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  height: 46px;
+
+  padding:
+    0 14px;
+
+  border-radius: 15px;
+
+  background:
+    rgba(255,255,255,.90);
+
+  border:
+    1px solid rgba(255,255,255,.9);
+
+  box-shadow:
+    0 5px 18px rgba(56,89,145,.06);
+}
+
+.search-box input {
+  width: 100%;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  font-size: 13px;
+
+  color: #17233D;
+}
+
+.search-box input::placeholder {
+  color: #98A6BA;
+}
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.progress-track {
+  background: #E7EDF7;
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal {
+  display: none;
+
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    rgba(17,29,51,.28);
+
+  z-index: 50;
+
+  align-items: flex-end;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.sheet {
+  width: 100%;
+
+  background: #fff;
+
+  border-radius:
+    28px 28px 0 0;
+
+  padding:
+    18px 22px 30px;
+
+  box-shadow:
+    0 -15px 50px
+    rgba(18,32,58,.15);
+
+  animation:
+    sheet .22s ease;
+}
+
+@keyframes sheet {
+
+  from {
+    transform:
+      translateY(100%);
+  }
+
+  to {
+    transform:
+      translateY(0);
+  }
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast {
+  position: absolute;
+
+  left: 50%;
+  bottom: 104px;
+
+  transform:
+    translate(-50%,12px);
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition: .22s ease;
+
+  z-index: 80;
+
+  white-space: nowrap;
+}
+
+.toast.show {
+  opacity: 1;
+
+  transform:
+    translate(-50%,0);
+}
+
+
+/* =========================================================
+   NOTE COMMENT
+========================================================= */
+
+.comment-area {
+  display: none;
+
+  margin-top: 12px;
+
+  padding-top: 12px;
+
+  border-top:
+    1px solid #E0E8F4;
+}
+
+.comment-area.show {
+  display: block;
+}
+
+.comment-area textarea {
+  width: 100%;
+
+  min-height: 72px;
+
+  resize: none;
+
+  border: 1px solid #DDE6F2;
+
+  border-radius: 12px;
+
+  padding: 10px;
+
+  outline: none;
+
+  font-family: inherit;
+
+  font-size: 12px;
+
+  color: #17233D;
+
+  background: #F8FAFD;
+}
+
+.comment-area textarea:focus {
+  border-color: #78A5F4;
+}
+
+
+/* =========================================================
+   FAVORITE
+========================================================= */
+
+.favorite-btn {
+  width: 34px;
+  height: 34px;
+
+  border-radius: 10px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  color: #A2AEC0;
+
+  background:
+    #F5F7FA;
+
+  transition: .18s ease;
+}
+
+.favorite-btn.active {
+  color: #F0A63B;
+
+  background:
+    #FFF4DF;
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
+
+.bottom-nav {
+  position: absolute;
+
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  height: 84px;
+
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-around;
+
+  padding-top: 11px;
+
+  border-top:
+    1px solid #DCE3EE;
+
+  z-index: 30;
+}
+
+.nav-btn {
+  width: 70px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 4px;
+}
+
+.nav-icon {
+  font-size: 22px;
+}
+
+.nav-label {
+  font-size: 10px;
+
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.brand-row {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-bottom: 5px;
+}
+
+.brand-mark {
+  width: 23px;
+  height: 23px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #79A8F5,
+      #4D79D8
+    );
+
+  color: white;
+
+  font-size: 13px;
+
+  box-shadow:
+    0 4px 10px rgba(77,121,216,.20);
+}
+
+.brand-name {
+  font-size: 14px;
+
+  font-weight: 800;
+
+  letter-spacing: -.3px;
+
+  color: #24375F;
+}
+
+.page-kicker {
+  font-size: 11px;
+
+  font-weight: 700;
+
+  letter-spacing: .25px;
+
+  color: #4D79D8;
+}
+
+.page-title {
+  font-size: 25px;
+
+  font-weight: 800;
+
+  letter-spacing: -.65px;
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="device">
+
+
+<!-- =========================================================
+     BACKGROUND
+========================================================= -->
+
+<div class="background-art">
+
+  <div class="ribbon one"></div>
+  <div class="ribbon two"></div>
+  <div class="ribbon three"></div>
+  <div class="ribbon four"></div>
+
+  <div class="circle-shape one"></div>
+  <div class="circle-shape two"></div>
+  <div class="circle-shape three"></div>
+
+  <div
+    class="background-dot"
+    style="top:180px;left:70px;">
+  </div>
+
+  <div
+    class="background-dot"
+    style="top:420px;right:70px;">
+  </div>
+
+  <div
+    class="background-dot"
+    style="top:700px;left:180px;">
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     STATUS BAR
+========================================================= -->
+
+<div
+  class="
+    relative z-20
+    h-11
+    px-6
+    flex
+    items-end
+    justify-between
+    pb-1
+    text-[12px]
+    font-semibold
+  "
+>
+
+  <span>9:41</span>
+
+  <div class="flex items-center gap-1.5">
+
+    <i class="ph-fill ph-cell-signal-full"></i>
+
+    <i class="ph-fill ph-wifi-high"></i>
+
+    <i class="ph-fill ph-battery-full text-[16px]"></i>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     SCREEN
+========================================================= -->
+
+<div
+  class="screen-scroll"
+  id="screen"
+>
+
+
+<!-- =========================================================
+     HOME
+========================================================= -->
+
+<section
+  id="tab-home"
+  class="tab active px-5"
+>
+
+<header
+  class="
+    pt-3
+    pb-5
+    flex
+    items-start
+    justify-between
+  "
+>
+
+  <div>
+
+    <div class="brand-row">
+
+      <div class="brand-mark">
+        🐬
+      </div>
+
+      <span class="brand-name">
+        CIFIC
+      </span>
+
+    </div>
+
+    <p class="page-kicker">
+      CPA LEARNING PARTNER
+    </p>
+
+    <h1
+      class="
+        text-[25px]
+        leading-tight
+        font-bold
+        tracking-[-.7px]
+        mt-1
+      "
+    >
+      김회계님, 오늘도<br>
+      목표를 향해 달려볼까요?
+    </h1>
+
+  </div>
+
+
+  <button
+    onclick="switchTab('profile')"
+    class="
+      press
+      w-11
+      h-11
+      rounded-full
+      bg-white/90
+      border border-white
+      shadow-card
+      flex
+      items-center
+      justify-center
+      mt-1
+    "
+  >
+
+    <i
+      class="
+        ph-fill
+        ph-user-circle
+        text-[23px]
+        text-navy
+      "
+    ></i>
+
+  </button>
+
+</header>
+
+
+<!-- =====================================================
+     STREAK
+===================================================== -->
+
+<button
+  onclick="toast('12일 연속 학습 중입니다. 오늘도 이어가세요!')"
+  class="
+    press
+    w-full
+    soft-card
+    rounded-2xl
+    border border-white/80
+    shadow-card
+    p-4
+    mb-4
+    flex
+    items-center
+    justify-between
+    text-left
+  "
+>
+
+  <div class="flex items-center gap-3">
+
+    <div
+      class="
+        w-10
+        h-10
+        rounded-xl
+        bg-[#EEF4FF]
+        flex
+        items-center
+        justify-center
+      "
+    >
+
+      <i
+        class="
+          ph-fill
+          ph-fire
+          text-[#F09A3E]
+          text-[22px]
+        "
+      ></i>
+
+    </div>
+
+
+    <div>
+
+      <p
+        class="
+          text-[12px]
+          text-sub
+          font-medium
+        "
+      >
+        학습 연속 일수
+      </p>
+
+      <p
+        class="
+          font-bold
+          text-[16px]
+          mt-0.5
+        "
+      >
+        12일째 열공 중
+        <span class="text-[#F09A3E]">🔥</span>
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <i
+    class="
+      ph-bold
+      ph-caret-right
+      text-sub
+    "
+  ></i>
+
+</button>
+
+
+<!-- =====================================================
+     D-DAY
+===================================================== -->
+
+<div
+  class="
+    press
+    w-full
+    rounded-3xl
+    p-5
+    mb-5
+    text-left
+    text-white
+    overflow-hidden
+    relative
+  "
+  style="
+    background:
+      linear-gradient(
+        135deg,
+        #7BA7F5 0%,
+        #5D83DD 100%
+      );
+  "
+>
+
+  <div class="relative z-10">
+
+    <div
+      class="
+        flex
+        items-center
+        justify-between
+        mb-5
+      "
+    >
+
+      <span
+        class="
+          text-[11px]
+          font-bold
+          px-2.5
+          py-1
+          rounded-full
+          bg-white/15
+          border border-white/15
+        "
+      >
+        2027 CPA 1차
+      </span>
+
+      <span
+        class="
+          text-[11px]
+          font-medium
+          opacity-85
+        "
+      >
+        시험 일정
+      </span>
+
+    </div>
+
+
+    <div class="flex items-end gap-2">
+
+      <strong
+        class="
+          text-[34px]
+          tracking-[-1.5px]
+        "
+      >
+        D-180
+      </strong>
+
+      <span
+        class="
+          text-[12px]
+          pb-1.5
+          opacity-85
+        "
+      >
+        시험일까지
+      </span>
+
+    </div>
+
+
+    <p
+      class="
+        text-[11px]
+        mt-3
+        opacity-80
+      "
+    >
+      지금의 학습 흐름을 꾸준히 이어가세요.
+    </p>
+
+  </div>
+
+
+  <i
+    class="
+      ph-fill
+      ph-calendar-blank
+      absolute
+      -right-3
+      -bottom-5
+      text-[125px]
+      opacity-[.09]
+    "
+  ></i>
+
+</div>
+
+
+<!-- =====================================================
+     TODAY REVIEW
+===================================================== -->
+
+<div class="mb-2.5">
+
+  <p
+    class="
+      text-[11px]
+      font-semibold
+      text-blueDeep
+      uppercase
+      tracking-[.5px]
+    "
+  >
+    FOR TODAY
+  </p>
+
+  <h2
+    class="
+      text-[18px]
+      font-bold
+      tracking-[-.3px]
+      mt-0.5
+    "
+  >
+    오늘의 복습 큐
+  </h2>
+
+</div>
+
+
+<button
+  onclick="toast('오늘의 추천 복습을 시작합니다.')"
+  class="
+    press
+    w-full
+    soft-card
+    border border-white/90
+    shadow-card
+    rounded-2xl
+    p-4
+    mb-5
+    text-left
+  "
+>
+
+  <div
+    class="
+      flex
+      items-center
+      justify-between
+      mb-3
+    "
+  >
+
+    <span
+      class="
+        text-[12px]
+        font-bold
+        text-navy
+      "
+    >
+      추천 복습
+    </span>
+
+    <span
+      class="
+        text-[11px]
+        text-sub
+      "
+    >
+      에빙하우스 기반
+    </span>
+
+  </div>
+
+
+  <div class="grid grid-cols-2 gap-3">
+
+
+    <!-- CONCEPT -->
+
+    <div
+      class="
+        rounded-xl
+        bg-[#F2F6FF]/90
+        p-3
+      "
+    >
+
+      <div
+        class="
+          w-9
+          h-9
+          rounded-xl
+          bg-white
+          flex
+          items-center
+          justify-center
+          shadow-sm
+        "
+      >
+
+        <i
+          class="
+            ph-fill
+            ph-brain
+            text-blueDeep
+            text-[21px]
+          "
+        ></i>
+
+      </div>
+
+      <p
+        class="
+          text-[21px]
+          font-bold
+          mt-2
+        "
+      >
+        8
+      </p>
+
+      <p
+        class="
+          text-[11px]
+          text-sub
+        "
+      >
+        추천 복습 개념
+      </p>
+
+    </div>
+
+
+    <!-- WRONG -->
+
+    <div
+      class="
+        rounded-xl
+        bg-[#F6F7FB]/90
+        p-3
+      "
+    >
+
+      <div
+        class="
+          w-9
+          h-9
+          rounded-xl
+          bg-white
+          flex
+          items-center
+          justify-center
+          shadow-sm
+        "
+      >
+
+        <i
+          class="
+            ph-fill
+            ph-book-open-text
+            text-navy
+            text-[21px]
+          "
+        ></i>
+
+      </div>
+
+      <p
+        class="
+          text-[21px]
+          font-bold
+          mt-2
+        "
+      >
+        5
+      </p>
+
+      <p
+        class="
+          text-[11px]
+          text-sub
+        "
+      >
+        다시 볼 오답
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <div
+    class="
+      mt-3
+      flex
+      items-center
+      justify-between
+    "
+  >
+
+    <p
+      class="
+        text-[12px]
+        text-sub
+      "
+    >
+      오늘 복습해야 할 학습이 도착했어요.
+    </p>
+
+    <i
+      class="
+        ph-bold
+        ph-arrow-right
+        text-blueDeep
+      "
+    ></i>
+
+  </div>
+
+</button>
+
+
+<!-- =====================================================
+     MODE CARDS
+===================================================== -->
+
+<div
+  class="
+    grid
+    grid-cols-2
+    gap-3
+    mb-5
+  "
+>
+
+
+<!-- 말문제 -->
+
+<button
+  onclick="openMode('말문제 특화')"
+  class="
+    press
+    text-left
+    rounded-2xl
+    p-4
+    bg-white/90
+    border border-white
+    shadow-card
+  "
+>
+
+  <div
+    class="
+      w-10
+      h-10
+      rounded-xl
+      bg-[#EEF4FF]
+      flex
+      items-center
+      justify-center
+      mb-3
+    "
+  >
+
+    <i
+      class="
+        ph-fill
+        ph-chat-circle-text
+        text-blueDeep
+        text-[20px]
+      "
+    ></i>
+
+  </div>
+
+
+  <p
+    class="
+      text-[16px]
+      font-bold
+    "
+  >
+    말문제 특화
+  </p>
+
+
+  <div
+    class="
+      flex
+      gap-1
+      mt-2
+      mb-2
+      flex-wrap
+    "
+  >
+
+    <span
+      class="
+        px-2
+        py-1
+        rounded-md
+        bg-[#EEF4FF]
+        text-blueDeep
+        text-[9px]
+        font-bold
+      "
+    >
+      세법
+    </span>
+
+    <span
+      class="
+        px-2
+        py-1
+        rounded-md
+        bg-[#EEF4FF]
+        text-blueDeep
+        text-[9px]
+        font-bold
+      "
+    >
+      상법
+    </span>
+
+    <span
+      class="
+        px-2
+        py-1
+        rounded-md
+        bg-[#EEF4FF]
+        text-blueDeep
+        text-[9px]
+        font-bold
+      "
+    >
+      회계학
+    </span>
+
+  </div>
+
+
+  <p
+    class="
+      text-[11px]
+      text-sub
+      leading-relaxed
+    "
+  >
+    말문제만 모아<br>
+    반복 회독 훈련
+  </p>
+
+
+  <div
+    class="
+      mt-3
+      flex
+      items-center
+      text-[11px]
+      text-blueDeep
+      font-bold
+    "
+  >
+    말문제 풀기
+
+    <i
+      class="
+        ph-bold
+        ph-arrow-right
+        ml-1
+      "
+    ></i>
+
+  </div>
+
+</button>
+
+
+<!-- 전범위 -->
+
+<button
+  onclick="openMode('전범위 실전 기출')"
+  class="
+    press
+    text-left
+    rounded-2xl
+    p-4
+    bg-white/90
+    border border-white
+    shadow-card
+  "
+>
+
+  <div
+    class="
+      w-10
+      h-10
+      rounded-xl
+      bg-[#EEF4FF]
+      flex
+      items-center
+      justify-center
+      mb-3
+    "
+  >
+
+    <i
+      class="
+        ph-fill
+        ph-exam
+        text-blueDeep
+        text-[20px]
+      "
+    ></i>
+
+  </div>
+
+
+  <p
+    class="
+      text-[16px]
+      font-bold
+    "
+  >
+    전범위 실전 기출
+  </p>
+
+
+  <p
+    class="
+      text-[11px]
+      text-sub
+      mt-2
+      leading-relaxed
+    "
+  >
+    실제 시험처럼<br>
+    전범위 기출 풀이
+  </p>
+
+
+  <div
+    class="
+      mt-3
+      flex
+      items-center
+      text-[11px]
+      text-blueDeep
+      font-bold
+    "
+  >
+    기출 문제 풀기
+
+    <i
+      class="
+        ph-bold
+        ph-arrow-right
+        ml-1
+      "
+    ></i>
+
+  </div>
+
+</button>
+
+</div>
+
+
+<!-- =====================================================
+     TODAY STRATEGY
+===================================================== -->
+
+<div
+  class="
+    rounded-2xl
+    bg-white/75
+    border border-white
+    shadow-card
+    p-4
+    mb-2
+  "
+>
+
+  <div class="flex gap-3">
+
+    <div
+      class="
+        w-9
+        h-9
+        rounded-lg
+        bg-[#EEF4FF]
+        flex
+        items-center
+        justify-center
+        shrink-0
+      "
+    >
+
+      <i
+        class="
+          ph-fill
+          ph-compass
+          text-blueDeep
+        "
+      ></i>
+
+    </div>
+
+
+    <div>
+
+      <p
+        class="
+          text-[13px]
+          font-bold
+        "
+      >
+        오늘의 학습 전략
+      </p>
+
+      <p
+        class="
+          text-[11px]
+          text-sub
+          mt-1
+          leading-relaxed
+        "
+      >
+        세법 부가가치세의
+        최근 오답률이 높아요.
+        복습 큐를 먼저 끝낸 뒤
+        해당 개념의 기출을
+        10문제 풀어보세요.
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+</section>
+
+
+<!-- =========================================================
+     PRACTICE
+========================================================= -->
+
+<section
+  id="tab-practice"
+  class="tab px-5"
+>
+
+<header class="pt-4 pb-5">
+
+  <div class="brand-row">
+
+    <div class="brand-mark">
+      🐬
+    </div>
+
+    <span class="brand-name">
+      CIFIC
+    </span>
+
+  </div>
+
+  <p class="page-kicker">
+    PRACTICE BY CONCEPT
+  </p>
+
+  <h1 class="page-title mt-1">
+    단원학습
+  </h1>
+
+  <p
+    class="
+      text-[12px]
+      text-sub
+      mt-2
+    "
+  >
+    반드시 맞혀야 하는
+    개념부터 집중 공략하세요.
+  </p>
+
+</header>
+
+
+<!-- STRATEGY -->
+
+<div
+  class="
+    rounded-2xl
+    bg-white/90
+    border border-white
+    shadow-card
+    p-4
+    mb-4
+  "
+>
+
+  <div
+    class="
+      flex
+      items-center
+      justify-between
+      mb-2
+    "
+  >
+
+    <div>
+
+      <p class="text-[11px] text-sub">
+        내 학습 전략
+      </p>
+
+      <p
+        class="
+          font-bold
+          text-[15px]
+        "
+      >
+        핵심 개념 우선 공략
+      </p>
+
+    </div>
+
+    <button
+      onclick="
+        openProfileSheet('strategy')
+      "
+      class="
+        text-[11px]
+        text-blueDeep
+        font-bold
+      "
+    >
+      전략 수정
+    </button>
+
+  </div>
+
+
+  <div class="flex gap-2 flex-wrap">
+
+    <span
+      class="
+        px-2.5
+        py-1
+        rounded-full
+        bg-blueSoft
+        text-blueDeep
+        text-[10px]
+        font-bold
+      "
+    >
+      재무회계
+    </span>
+
+    <span
+      class="
+        px-2.5
+        py-1
+        rounded-full
+        bg-blueSoft
+        text-blueDeep
+        text-[10px]
+        font-bold
+      "
+    >
+      세법
+    </span>
+
+    <span
+      class="
+        px-2.5
+        py-1
+        rounded-full
+        bg-[#F3F5F8]
+        text-sub
+        text-[10px]
+        font-bold
+      "
+    >
+      상법
+    </span>
+
+  </div>
+
+</div>
+
+
+<div class="space-y-3">
+
+
+<!-- 재무회계 -->
+
+<button
+  onclick="toast('재무회계 단원을 엽니다.')"
+  class="
+    press
+    w-full
+    bg-white/90
+    rounded-2xl
+    border border-white
+    shadow-card
+    p-4
+    flex
+    items-center
+    justify-between
+    text-left
+  "
+>
+
+  <div class="flex items-center gap-3">
+
+    <div
+      class="
+        w-11
+        h-11
+        rounded-xl
+        bg-blueSoft
+        flex
+        items-center
+        justify-center
+      "
+    >
+
+      <i
+        class="
+          ph-fill
+          ph-calculator
+          text-blueDeep
+          text-[21px]
+        "
+      ></i>
+
+    </div>
+
+
+    <div>
+
+      <p
+        class="
+          font-bold
+          text-[15px]
+        "
+      >
+        재무회계
+      </p>
+
+      <p
+        class="
+          text-[11px]
+          text-sub
+          mt-1
+        "
+      >
+        120문제 · 진도율 45%
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <i
+    class="
+      ph-bold
+      ph-caret-right
+      text-sub
+    "
+  ></i>
+
+</button>
+
+
+<!-- 원가관리 -->
+
+<button
+  onclick="toast('원가관리회계 단원을 엽니다.')"
+  class="
+    press
+    w-full
+    bg-white/90
+    rounded-2xl
+    border border-white
+    shadow-card
+    p-4
+    flex
+    items-center
+    justify-between
+    text-left
+  "
+>
+
+  <div class="flex items-center gap-3">
+
+    <div
+      class="
+        w-11
+        h-11
+        rounded-xl
+        bg-[#F0F4FA]
+        flex
+        items-center
+        justify-center
+      "
+    >
+
+      <i
+        class="
+          ph-fill
+          ph-chart-bar
+          text-navy
+          text-[21px]
+        "
+      ></i>
+
+    </div>
+
+
+    <div>
+
+      <p
+        class="
+          font-bold
+          text-[15px]
+        "
+      >
+        원가관리회계
+      </p>
+
+      <p
+        class="
+          text-[11px]
+          text-sub
+          mt-1
+        "
+      >
+        85문제 · 진도율 20%
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <i
+    class="
+      ph-bold
+      ph-caret-right
+      text-sub
+    "
+  ></i>
+
+</button>
+
+
+<!-- 세법 -->
+
+<button
+  onclick="toast('세법 단원을 엽니다.')"
+  class="
+    press
+    w-full
+    bg-white/90
+    rounded-2xl
+    border border-white
+    shadow-card
+    p-4
+    flex
+    items-center
+    justify-between
+    text-left
+  "
+>
+
+  <div class="flex items-center gap-3">
+
+    <div
+      class="
+        w-11
+        h-11
+        rounded-xl
+        bg-[#EEF4FF]
+        flex
+        items-center
+        justify-center
+      "
+    >
+
+      <i
+        class="
+          ph-fill
+          ph-receipt
+          text-blueDeep
+          text-[21px]
+        "
+      ></i>
+
+    </div>
+
+
+    <div>
+
+      <p
+        class="
+          font-bold
+          text-[15px]
+        "
+      >
+        세법
+      </p>
+
+      <p
+        class="
+          text-[11px]
+          text-sub
+          mt-1
+        "
+      >
+        200문제 · 진도율 10%
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <i
+    class="
+      ph-bold
+      ph-caret-right
+      text-sub
+    "
+  ></i>
+
+</button>
+
+
+<!-- 상법 -->
+
+<button
+  onclick="toast('상법 단원을 엽니다.')"
+  class="
+    press
+    w-full
+    bg-white/90
+    rounded-2xl
+    border border-white
+    shadow-card
+    p-4
+    flex
+    items-center
+    justify-between
+    text-left
+  "
+>
+
+  <div class="flex items-center gap-3">
+
+    <div
+      class="
+        w-11
+        h-11
+        rounded-xl
+        bg-[#F0F4FA]
+        flex
+        items-center
+        justify-center
+      "
+    >
+
+      <i
+        class="
+          ph-fill
+          ph-scales
+          text-navy
+          text-[21px]
+        "
+      ></i>
+
+    </div>
+
+
+    <div>
+
+      <p
+        class="
+          font-bold
+          text-[15px]
+        "
+      >
+        상법
+      </p>
+
+      <p
+        class="
+          text-[11px]
+          text-sub
+          mt-1
+        "
+      >
+        95문제 · 진도율 12%
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <i
+    class="
+      ph-bold
+      ph-caret-right
+      text-sub
+    "
+  ></i>
+
+</button>
+
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     WRONG ANSWER NOTES
+========================================================= -->
+
+<section
+  id="tab-notes"
+  class="tab px-5"
+>
+
+<header class="pt-4 pb-4">
+
+  <div class="brand-row">
+
+    <div class="brand-mark">
+      🐬
+    </div>
+
+    <span class="brand-name">
+      CIFIC
+    </span>
+
+  </div>
+
+  <p class="page-kicker">
+    AUTOMATIC REVIEW
+  </p>
+
+  <h1 class="page-title mt-1">
+    오답노트
+  </h1>
+
+  <p
+    class="
+      text-[12px]
+      text-sub
+      mt-2
+    "
+  >
+    틀린 문제를 자동으로 정리하고,
+    나만의 코멘트까지 기록하세요.
+  </p>
+
+</header>
+
+
+<!-- SEARCH -->
+
+<div class="search-box mb-3">
+
+  <i
+    class="
+      ph-bold
+      ph-magnifying-glass
+      text-sub
+      text-[18px]
+    "
+  ></i>
+
+  <input
+    id="noteSearch"
+    type="text"
+    placeholder="과목, 개념, 문제 검색"
+    oninput="searchNotes()"
+  >
+
+  <button
+    onclick="
+      document.getElementById('noteSearch').value='';
+      searchNotes();
+    "
+  >
+    <i
+      class="
+        ph-bold
+        ph-x
+        text-sub
+      "
+    ></i>
+  </button>
+
+</div>
+
+
+<!-- FILTER / FAVORITE -->
+
+<div
+  class="
+    flex
+    items-center
+    justify-between
+    mb-4
+  "
+>
+
+  <div
+    class="
+      flex
+      gap-2
+      overflow-x-auto
+    "
+  >
+
+    <button
+      class="
+        px-3
+        py-1.5
+        rounded-full
+        bg-navy
+        text-white
+        text-[10px]
+        font-bold
+        shrink-0
+      "
+    >
+      전체 12
+    </button>
+
+    <button
+      onclick="toast('재무회계 오답만 표시합니다.')"
+      class="
+        px-3
+        py-1.5
+        rounded-full
+        bg-white
+        border border-line
+        text-sub
+        text-[10px]
+        font-bold
+        shrink-0
+      "
+    >
+      재무회계 4
+    </button>
+
+    <button
+      onclick="toast('세법 오답만 표시합니다.')"
+      class="
+        px-3
+        py-1.5
+        rounded-full
+        bg-white
+        border border-line
+        text-sub
+        text-[10px]
+        font-bold
+        shrink-0
+      "
+    >
+      세법 5
+    </button>
+
+    <button
+      onclick="toast('상법 오답만 표시합니다.')"
+      class="
+        px-3
+        py-1.5
+        rounded-full
+        bg-white
+        border border-line
+        text-sub
+        text-[10px]
+        font-bold
+        shrink-0
+      "
+    >
+      상법 3
+    </button>
+
+  </div>
+
+
+  <button
+    onclick="toast('즐겨찾기한 오답만 표시합니다.')"
+    class="
+      ml-2
+      shrink-0
+      w-9
+      h-9
+      rounded-xl
+      bg-white
+      border border-line
+      flex
+      items-center
+      justify-center
+    "
+  >
+
+    <i
+      class="
+        ph-fill
+        ph-star
+        text-[#F0A63B]
+        text-[16px]
+      "
+    ></i>
+
+  </button>
+
+</div>
+
+
+<div
+  id="notesList"
+  class="space-y-3"
+>
+
+
+<!-- =====================================================
+     WRONG NOTE 1
+===================================================== -->
+
+<article
+  class="
+    note-item
+    bg-white/90
+    rounded-2xl
+    border border-white
+    shadow-card
+    p-4
+  "
+  data-search="
+    재무회계 재고자산
+    기말재고자산 단가결정방법
+    선입선출법
+  "
+>
+
+  <div
+    class="
+      flex
+      justify-between
+      items-start
+    "
+  >
+
+    <span
+      class="
+        px-2
+        py-1
+        rounded-md
+        bg-[#FFF0F0]
+        text-[#D85B62]
+        text-[10px]
+        font-bold
+      "
+    >
+      오답 3회
+    </span>
+
+
+    <div class="flex items-center gap-2">
+
+      <button
+        onclick="toggleFavorite(this)"
+        class="favorite-btn"
+        aria-label="즐겨찾기"
+      >
+
+        <i
+          class="
+            ph
+            ph-star
+            text-[17px]
+          "
+        ></i>
+
+      </button>
+
+      <span
+        class="
+          text-[10px]
+          text-sub
+        "
+      >
+        08.20
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <p
+    class="
+      text-[11px]
+      text-blueDeep
+      font-bold
+      mt-3
+    "
+  >
+    재무회계 · 재고자산
+  </p>
+
+
+  <p
+    class="
+      font-semibold
+      text-[13px]
+      leading-relaxed
+      mt-1
+    "
+  >
+    기말재고자산 단가결정방법에
+    대한 설명으로 옳지 않은 것은?
+  </p>
+
+
+  <button
+    onclick="toggleAnswer(this)"
+    class="
+      mt-3
+      w-full
+      py-2.5
+      rounded-xl
+      bg-bg
+      text-[11px]
+      font-bold
+    "
+  >
+
+    해설 및 정답 보기
+
+    <i
+      class="
+        ph-bold
+        ph-caret-down
+        ml-1
+      "
+    ></i>
+
+  </button>
+
+
+  <div
+    class="
+      answer-area
+      hidden
+      pt-3
+      mt-3
+      border-t
+      border-line
+      text-[11px]
+      text-sub
+      leading-relaxed
+    "
+  >
+
+    <b class="text-[#D85B62]">
+      정답 3번.
+    </b>
+
+    선입선출법의
+    기말재고자산 평가 특성을
+    다시 확인하세요.
+
+  </div>
+
+
+  <!-- COMMENT -->
+
+  <button
+    onclick="toggleComment(this)"
+    class="
+      mt-2
+      w-full
+      py-2.5
+      rounded-xl
+      bg-[#F7F9FC]
+      text-sub
+      text-[11px]
+      font-bold
+      flex
+      items-center
+      justify-center
+      gap-1
+    "
+  >
+
+    <i
+      class="
+        ph-bold
+        ph-note-pencil
+      "
+    ></i>
+
+    코멘트 추가
+
+  </button>
+
+
+  <div class="comment-area">
+
+    <textarea
+      placeholder="이 문제에서 헷갈린 점이나 다시 기억해야 할 내용을 적어보세요."
+    ></textarea>
+
+    <div
+      class="
+        flex
+        justify-end
+        gap-2
+        mt-2
+      "
+    >
+
+      <button
+        onclick="cancelComment(this)"
+        class="
+          px-3
+          py-2
+          rounded-lg
+          bg-[#F3F5F8]
+          text-sub
+          text-[10px]
+          font-bold
+        "
+      >
+        취소
+      </button>
+
+      <button
+        onclick="saveComment(this)"
+        class="
+          px-3
+          py-2
+          rounded-lg
+          bg-blueDeep
+          text-white
+          text-[10px]
+          font-bold
+        "
+      >
+        저장
+      </button>
+
+    </div>
+
+  </div>
+
+</article>
+
+
+<!-- =====================================================
+     WRONG NOTE 2
+===================================================== -->
+
+<article
+  class="
+    note-item
+    bg-white/90
+    rounded-2xl
+    border border-white
+    shadow-card
+    p-4
+  "
+  data-search="
+    세법 부가가치세
+    면세포기
+    면세포기에 대한 설명
+  "
+>
+
+  <div
+    class="
+      flex
+      justify-between
+      items-start
+    "
+  >
+
+    <span
+      class="
+        px-2
+        py-1
+        rounded-md
+        bg-[#FFF6E8]
+        text-[#B87925]
+        text-[10px]
+        font-bold
+      "
+    >
+      오답 1회
+    </span>
+
+
+    <div class="flex items-center gap-2">
+
+      <button
+        onclick="toggleFavorite(this)"
+        class="favorite-btn"
+        aria-label="즐겨찾기"
+      >
+
+        <i
+          class="
+            ph
+            ph-star
+            text-[17px]
+          "
+        ></i>
+
+      </button>
+
+      <span
+        class="
+          text-[10px]
+          text-sub
+        "
+      >
+        08.18
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <p
+    class="
+      text-[11px]
+      text-blueDeep
+      font-bold
+      mt-3
+    "
+  >
+    세법 · 부가가치세
+  </p>
+
+
+  <p
+    class="
+      font-semibold
+      text-[13px]
+      leading-relaxed
+      mt-1
+    "
+  >
+    면세포기에 대한 설명 중
+    가장 적절한 것은?
+  </p>
+
+
+  <button
+    onclick="toggleAnswer(this)"
+    class="
+      mt-3
+      w-full
+      py-2.5
+      rounded-xl
+      bg-bg
+      text-[11px]
+      font-bold
+    "
+  >
+
+    해설 및 정답 보기
+
+    <i
+      class="
+        ph-bold
+        ph-caret-down
+        ml-1
+      "
+    ></i>
+
+  </button>
+
+
+  <div
+    class="
+      answer-area
+      hidden
+      pt-3
+      mt-3
+      border-t
+      border-line
+      text-[11px]
+      text-sub
+      leading-relaxed
+    "
+  >
+
+    <b class="text-[#D85B62]">
+      정답 2번.
+    </b>
+
+    면세포기 관련 요건과
+    적용기간을 다시 복습하세요.
+
+  </div>
+
+
+  <button
+    onclick="toggleComment(this)"
+    class="
+      mt-2
+      w-full
+      py-2.5
+      rounded-xl
+      bg-[#F7F9FC]
+      text-sub
+      text-[11px]
+      font-bold
+      flex
+      items-center
+      justify-center
+      gap-1
+    "
+  >
+
+    <i
+      class="
+        ph-bold
+        ph-note-pencil
+      "
+    ></i>
+
+    코멘트 추가
+
+  </button>
+
+
+  <div class="comment-area">
+
+    <textarea
+      placeholder="이 문제에서 헷갈린 점이나 다시 기억해야 할 내용을 적어보세요."
+    ></textarea>
+
+    <div
+      class="
+        flex
+        justify-end
+        gap-2
+        mt-2
+      "
+    >
+
+      <button
+        onclick="cancelComment(this)"
+        class="
+          px-3
+          py-2
+          rounded-lg
+          bg-[#F3F5F8]
+          text-sub
+          text-[10px]
+          font-bold
+        "
+      >
+        취소
+      </button>
+
+      <button
+        onclick="saveComment(this)"
+        class="
+          px-3
+          py-2
+          rounded-lg
+          bg-blueDeep
+          text-white
+          text-[10px]
+          font-bold
+        "
+      >
+        저장
+      </button>
+
+    </div>
+
+  </div>
+
+</article>
+
+
+<!-- =====================================================
+     WRONG NOTE 3
+===================================================== -->
+
+<article
+  class="
+    note-item
+    bg-white/90
+    rounded-2xl
+    border border-white
+    shadow-card
+    p-4
+  "
+  data-search="
+    상법 회사법 주식
+    주주총회
+    의결권
+  "
+>
+
+  <div
+    class="
+      flex
+      justify-between
+      items-start
+    "
+  >
+
+    <span
+      class="
+        px-2
+        py-1
+        rounded-md
+        bg-[#EEF4FF]
+        text-blueDeep
+        text-[10px]
+        font-bold
+      "
+    >
+      오답 2회
+    </span>
+
+
+    <div class="flex items-center gap-2">
+
+      <button
+        onclick="toggleFavorite(this)"
+        class="favorite-btn"
+        aria-label="즐겨찾기"
+      >
+
+        <i
+          class="
+            ph
+            ph-star
+            text-[17px]
+          "
+        ></i>
+
+      </button>
+
+      <span
+        class="
+          text-[10px]
+          text-sub
+        "
+      >
+        08.16
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <p
+    class="
+      text-[11px]
+      text-blueDeep
+      font-bold
+      mt-3
+    "
+  >
+    상법 · 회사법
+  </p>
+
+
+  <p
+    class="
+      font-semibold
+      text-[13px]
+      leading-relaxed
+      mt-1
+    "
+  >
+    주주총회의 의결권 행사에 대한
+    설명으로 옳은 것은?
+  </p>
+
+
+  <button
+    onclick="toggleAnswer(this)"
+    class="
+      mt-3
+      w-full
+      py-2.5
+      rounded-xl
+      bg-bg
+      text-[11px]
+      font-bold
+    "
+  >
+
+    해설 및 정답 보기
+
+    <i
+      class="
+        ph-bold
+        ph-caret-down
+        ml-1
+      "
+    ></i>
+
+  </button>
+
+
+  <div
+    class="
+      answer-area
+      hidden
+      pt-3
+      mt-3
+      border-t
+      border-line
+      text-[11px]
+      text-sub
+      leading-relaxed
+    "
+  >
+
+    <b class="text-[#D85B62]">
+      정답 4번.
+    </b>
+
+    의결권의 원칙과
+    예외적인 제한 사유를
+    다시 확인하세요.
+
+  </div>
+
+
+  <button
+    onclick="toggleComment(this)"
+    class="
+      mt-2
+      w-full
+      py-2.5
+      rounded-xl
+      bg-[#F7F9FC]
+      text-sub
+      text-[11px]
+      font-bold
+      flex
+      items-center
+      justify-center
+      gap-1
+    "
+  >
+
+    <i
+      class="
+        ph-bold
+        ph-note-pencil
+      "
+    ></i>
+
+    코멘트 추가
+
+  </button>
+
+
+  <div class="comment-area">
+
+    <textarea
+      placeholder="이 문제에서 헷갈린 점이나 다시 기억해야 할 내용을 적어보세요."
+    ></textarea>
+
+    <div
+      class="
+        flex
+        justify-end
+        gap-2
+        mt-2
+      "
+    >
+
+      <button
+        onclick="cancelComment(this)"
+        class="
+          px-3
+          py-2
+          rounded-lg
+          bg-[#F3F5F8]
+          text-sub
+          text-[10px]
+          font-bold
+        "
+      >
+        취소
+      </button>
+
+      <button
+        onclick="saveComment(this)"
+        class="
+          px-3
+          py-2
+          rounded-lg
+          bg-blueDeep
+          text-white
+          text-[10px]
+          font-bold
+        "
+      >
+        저장
+      </button>
+
+    </div>
+
+  </div>
+
+</article>
+
+
+</div>
+
+
+<div
+  id="noSearchResult"
+  class="
+    hidden
+    text-center
+    py-12
+  "
+>
+
+  <div
+    class="
+      w-12
+      h-12
+      mx-auto
+      rounded-2xl
+      bg-white
+      flex
+      items-center
+      justify-center
+      shadow-card
+      mb-3
+    "
+  >
+
+    <i
+      class="
+        ph-bold
+        ph-magnifying-glass
+        text-sub
+        text-xl
+      "
+    ></i>
+
+  </div>
+
+  <p
+    class="
+      font-bold
+      text-[13px]
+    "
+  >
+    검색 결과가 없어요.
+  </p>
+
+  <p
+    class="
+      text-[11px]
+      text-sub
+      mt-1
+    "
+  >
+    다른 키워드로 검색해보세요.
+  </p>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     PROFILE
+========================================================= -->
+
+<section
+  id="tab-profile"
+  class="tab px-5"
+>
+
+<header class="pt-4 pb-5">
+
+  <div class="brand-row">
+
+    <div class="brand-mark">
+      🐬
+    </div>
+
+    <span class="brand-name">
+      CIFIC
+    </span>
+
+  </div>
+
+  <p class="page-kicker">
+    MY LEARNING PROFILE
+  </p>
+
+  <h1 class="page-title mt-1">
+    마이프로필
+  </h1>
+
+</header>
+
+
+<!-- PROFILE CARD -->
+
+<div
+  class="
+    bg-white/90
+    border border-white
+    shadow-card
+    rounded-3xl
+    p-5
+    mb-4
+  "
+>
+
+  <div class="flex items-center gap-4">
+
+    <div
+      class="
+        w-16
+        h-16
+        rounded-full
+        bg-blueSoft
+        flex
+        items-center
+        justify-center
+      "
+    >
+
+      <i
+        class="
+          ph-fill
+          ph-user
+          text-blueDeep
+          text-[29px]
+        "
+      ></i>
+
+    </div>
+
+
+    <div>
+
+      <p
+        class="
+          text-[20px]
+          font-bold
+        "
+      >
+        김회계님
+      </p>
+
+      <p
+        class="
+          text-[11px]
+          text-sub
+          mt-1
+        "
+      >
+        CPA 1차 · 학습 86일
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <div
+    class="
+      grid
+      grid-cols-2
+      gap-2
+      mt-5
+    "
+  >
+
+    <div
+      class="
+        rounded-xl
+        bg-bg
+        p-3
+        text-center
+      "
+    >
+
+      <p class="font-bold">
+        12일
+      </p>
+
+      <p
+        class="
+          text-[10px]
+          text-sub
+          mt-1
+        "
+      >
+        연속 학습
+      </p>
+
+    </div>
+
+
+    <div
+      class="
+        rounded-xl
+        bg-bg
+        p-3
+        text-center
+      "
+    >
+
+      <p class="font-bold">
+        75%
+      </p>
+
+      <p
+        class="
+          text-[10px]
+          text-sub
+          mt-1
+        "
+      >
+        최근 정답률
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     LEARNING MANAGEMENT
+===================================================== -->
+
+<div
+  class="
+    mb-2
+    px-1
+  "
+>
+
+  <p
+    class="
+      text-[11px]
+      text-sub
+      font-bold
+    "
+  >
+    학습 관리
+  </p>
+
+</div>
+
+
+<div
+  class="
+    bg-white/90
+    border border-white
+    rounded-2xl
+    overflow-hidden
+    shadow-card
+  "
+>
+
+
+<!-- ANALYTICS -->
+
+<button
+  onclick="openProfileSheet('analytics')"
+  class="
+    press
+    w-full
+    p-4
+    flex
+    items-center
+    justify-between
+    border-b border-line
+    text-left
+  "
+>
+
+  <div class="flex items-center gap-3">
+
+    <div
+      class="
+        w-9
+        h-9
+        rounded-lg
+        bg-blueSoft
+        flex
+        items-center
+        justify-center
+      "
+    >
+
+      <i
+        class="
+          ph-fill
+          ph-chart-line-up
+          text-blueDeep
+        "
+      ></i>
+
+    </div>
+
+
+    <div>
+
+      <p
+        class="
+          font-bold
+          text-[14px]
+        "
+      >
+        진단분석
+      </p>
+
+      <p
+        class="
+          text-[10px]
+          text-sub
+          mt-0.5
+        "
+      >
+        강점 · 잠재적 약점 · 과목별 정답률
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <i
+    class="
+      ph-bold
+      ph-caret-right
+      text-sub
+    "
+  ></i>
+
+</button>
+
+
+<!-- STRATEGY -->
+
+<button
+  onclick="openProfileSheet('strategy')"
+  class="
+    press
+    w-full
+    p-4
+    flex
+    items-center
+    justify-between
+    border-b border-line
+    text-left
+  "
+>
+
+  <div class="flex items-center gap-3">
+
+    <div
+      class="
+        w-9
+        h-9
+        rounded-lg
+        bg-[#F0F4FA]
+        flex
+        items-center
+        justify-center
+      "
+    >
+
+      <i
+        class="
+          ph-fill
+          ph-compass
+          text-navy
+        "
+      ></i>
+
+    </div>
+
+
+    <div>
+
+      <p
+        class="
+          font-bold
+          text-[14px]
+        "
+      >
+        전략 수정
+      </p>
+
+      <p
+        class="
+          text-[10px]
+          text-sub
+          mt-0.5
+        "
+      >
+        반드시 맞힐 영역과 학습 우선순위 설정
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <i
+    class="
+      ph-bold
+      ph-caret-right
+      text-sub
+    "
+  ></i>
+
+</button>
+
+
+<!-- EXAM -->
+
+<button
+  onclick="toast('시험 일정 설정을 엽니다.')"
+  class="
+    press
+    w-full
+    p-4
+    flex
+    items-center
+    justify-between
+    text-left
+  "
+>
+
+  <div class="flex items-center gap-3">
+
+    <div
+      class="
+        w-9
+        h-9
+        rounded-lg
+        bg-[#F0F4FA]
+        flex
+        items-center
+        justify-center
+      "
+    >
+
+      <i
+        class="
+          ph-fill
+          ph-calendar-blank
+          text-navy
+        "
+      ></i>
+
+    </div>
+
+
+    <div>
+
+      <p
+        class="
+          font-bold
+          text-[14px]
+        "
+      >
+        시험 일정
+      </p>
+
+      <p
+        class="
+          text-[10px]
+          text-sub
+          mt-0.5
+        "
+      >
+        2027 CPA 1차 · D-180
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <i
+    class="
+      ph-bold
+      ph-caret-right
+      text-sub
+    "
+  ></i>
+
+</button>
+
+</div>
+
+
+<!-- SERVICE -->
+
+<div
+  class="
+    mt-5
+    mb-2
+    px-1
+  "
+>
+
+  <p
+    class="
+      text-[11px]
+      text-sub
+      font-bold
+    "
+  >
+    서비스
+  </p>
+
+</div>
+
+
+<div
+  class="
+    bg-white/90
+    border border-white
+    rounded-2xl
+    overflow-hidden
+    shadow-card
+  "
+>
+
+<button
+  onclick="toast('학습 기록을 확인합니다.')"
+  class="
+    press
+    w-full
+    p-4
+    flex
+    items-center
+    justify-between
+    text-left
+    border-b border-line
+  "
+>
+
+  <span
+    class="
+      font-semibold
+      text-[13px]
+    "
+  >
+    학습 기록
+  </span>
+
+  <i
+    class="
+      ph-bold
+      ph-caret-right
+      text-sub
+    "
+  ></i>
+
+</button>
+
+
+<button
+  onclick="toast('알림 설정을 엽니다.')"
+  class="
+    press
+    w-full
+    p-4
+    flex
+    items-center
+    justify-between
+    text-left
+  "
+>
+
+  <span
+    class="
+      font-semibold
+      text-[13px]
+    "
+  >
+    알림 설정
+  </span>
+
+  <i
+    class="
+      ph-bold
+      ph-caret-right
+      text-sub
+    "
+  ></i>
+
+</button>
+
+</div>
+
+</section>
+
+</div>
+
+
+<!-- =========================================================
+     BOTTOM NAV
+========================================================= -->
+
+<nav
+  class="
+    bottom-nav
+    glass
+  "
+>
+
+
+<!-- HOME -->
+
+<button
+  onclick="switchTab('home')"
+  data-tab="home"
+  class="
+    nav-btn
+    text-blueDeep
+  "
+>
+
+  <i
+    class="
+      nav-icon
+      ph-fill
+      ph-house
+    "
+  ></i>
+
+  <span class="nav-label">
+    홈
+  </span>
+
+</button>
+
+
+<!-- PRACTICE -->
+
+<button
+  onclick="switchTab('practice')"
+  data-tab="practice"
+  class="
+    nav-btn
+    text-sub
+  "
+>
+
+  <i
+    class="
+      nav-icon
+      ph
+      ph-books
+    "
+  ></i>
+
+  <span class="nav-label">
+    단원학습
+  </span>
+
+</button>
+
+
+<!-- NOTES -->
+
+<button
+  onclick="switchTab('notes')"
+  data-tab="notes"
+  class="
+    nav-btn
+    text-sub
+  "
+>
+
+  <i
+    class="
+      nav-icon
+      ph
+      ph-notebook
+    "
+  ></i>
+
+  <span class="nav-label">
+    오답노트
+  </span>
+
+</button>
+
+
+<!-- PROFILE -->
+
+<button
+  onclick="switchTab('profile')"
+  data-tab="profile"
+  class="
+    nav-btn
+    text-sub
+  "
+>
+
+  <i
+    class="
+      nav-icon
+      ph
+      ph-user-circle
+    "
+  ></i>
+
+  <span class="nav-label">
+    마이프로필
+  </span>
+
+</button>
+
+</nav>
+
+
+<!-- =========================================================
+     BOTTOM SHEET
+========================================================= -->
+
+<div
+  id="sheetModal"
+  class="modal"
+  onclick="closeSheet(event)"
+>
+
+  <div
+    class="sheet"
+    onclick="event.stopPropagation()"
+  >
+
+    <div
+      class="
+        w-10
+        h-1
+        rounded-full
+        bg-[#D8DFE9]
+        mx-auto
+        mb-5
+      "
+    ></div>
+
+    <div id="sheetContent"></div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     TOAST
+========================================================= -->
+
+<div
+  id="toast"
+  class="
+    toast
+    bg-[#1E2B43]
+    text-white
+    text-[12px]
+    font-semibold
+    px-4
+    py-2.5
+    rounded-full
+    shadow-lg
+  "
+>
+  완료
+</div>
+
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   TAB SWITCH
+========================================================= */
+
+function switchTab(id) {
+
+  document
+    .querySelectorAll(".tab")
+    .forEach(tab => {
+      tab.classList.remove("active");
+    });
+
+
+  const target =
+    document.getElementById(
+      "tab-" + id
+    );
+
+
+  if (target) {
+    target.classList.add("active");
+  }
+
+
+  document
+    .querySelectorAll(".nav-btn")
+    .forEach(btn => {
+
+      const active =
+        btn.dataset.tab === id;
+
+
+      btn.classList.toggle(
+        "text-blueDeep",
+        active
+      );
+
+      btn.classList.toggle(
+        "text-sub",
+        !active
+      );
+
+
+      const icon =
+        btn.querySelector("i");
+
+
+      if (icon) {
+
+        icon.classList.toggle(
+          "ph-fill",
+          active
+        );
+
+        icon.classList.toggle(
+          "ph",
+          !active
+        );
+
+      }
+
+    });
+
+
+  document
+    .getElementById("screen")
+    .scrollTop = 0;
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+function toast(message) {
+
+  const el =
+    document.getElementById(
+      "toast"
+    );
+
+
+  el.textContent =
+    message;
+
+
+  el.classList.add("show");
+
+
+  clearTimeout(
+    window.__toast
+  );
+
+
+  window.__toast =
+    setTimeout(() => {
+
+      el.classList.remove(
+        "show"
+      );
+
+    }, 2200);
+
+}
+
+
+/* =========================================================
+   ANSWER TOGGLE
+========================================================= */
+
+function toggleAnswer(btn) {
+
+  const area =
+    btn.nextElementSibling;
+
+
+  area.classList.toggle(
+    "hidden"
+  );
+
+
+  const icon =
+    btn.querySelector("i");
+
+
+  if (icon) {
+
+    icon.style.transform =
+      area.classList.contains("hidden")
+        ? "rotate(0)"
+        : "rotate(180deg)";
+
+  }
+
+}
+
+
+/* =========================================================
+   FAVORITE
+========================================================= */
+
+function toggleFavorite(btn) {
+
+  btn.classList.toggle("active");
+
+
+  const icon =
+    btn.querySelector("i");
+
+
+  if (
+    btn.classList.contains("active")
+  ) {
+
+    icon.classList.remove(
+      "ph"
+    );
+
+    icon.classList.add(
+      "ph-fill"
+    );
+
+    toast("즐겨찾기에 추가했습니다.");
+
+  } else {
+
+    icon.classList.remove(
+      "ph-fill"
+    );
+
+    icon.classList.add(
+      "ph"
+    );
+
+    toast("즐겨찾기에서 삭제했습니다.");
+
+  }
+
+}
+
+
+/* =========================================================
+   COMMENT
+========================================================= */
+
+function toggleComment(btn) {
+
+  const area =
+    btn.nextElementSibling;
+
+
+  area.classList.toggle(
+    "show"
+  );
+
+
+  if (
+    area.classList.contains("show")
+  ) {
+
+    btn.innerHTML = `
+      <i class="ph-bold ph-note-pencil"></i>
+      코멘트 닫기
+    `;
+
+  } else {
+
+    btn.innerHTML = `
+      <i class="ph-bold ph-note-pencil"></i>
+      코멘트 추가
+    `;
+
+  }
+
+}
+
+
+function cancelComment(btn) {
+
+  const area =
+    btn.closest(".comment-area");
+
+
+  area.classList.remove(
+    "show"
+  );
+
+
+  const toggleBtn =
+    area.previousElementSibling;
+
+
+  toggleBtn.innerHTML = `
+    <i class="ph-bold ph-note-pencil"></i>
+    코멘트 추가
+  `;
+
+}
+
+
+function saveComment(btn) {
+
+  const area =
+    btn.closest(".comment-area");
+
+
+  const textarea =
+    area.querySelector("textarea");
+
+
+  if (
+    !textarea.value.trim()
+  ) {
+
+    toast("코멘트 내용을 입력해주세요.");
+
+    textarea.focus();
+
+    return;
+
+  }
+
+
+  area.classList.remove(
+    "show"
+  );
+
+
+  const toggleBtn =
+    area.previousElementSibling;
+
+
+  toggleBtn.innerHTML = `
+    <i class="ph-fill ph-check-circle text-blueDeep"></i>
+    코멘트 수정
+  `;
+
+
+  toast("오답노트에 코멘트를 저장했습니다.");
+
+}
+
+
+/* =========================================================
+   SEARCH NOTES
+========================================================= */
+
+function searchNotes() {
+
+  const query =
+    document
+      .getElementById("noteSearch")
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  const notes =
+    document.querySelectorAll(
+      ".note-item"
+    );
+
+
+  let visibleCount = 0;
+
+
+  notes.forEach(note => {
+
+    const text =
+      note
+        .dataset
+        .search
+        .toLowerCase();
+
+
+    const matched =
+      !query ||
+      text.includes(query);
+
+
+    note.style.display =
+      matched
+        ? ""
+        : "none";
+
+
+    if (matched) {
+      visibleCount++;
+    }
+
+  });
+
+
+  const empty =
+    document.getElementById(
+      "noSearchResult"
+    );
+
+
+  empty.classList.toggle(
+    "hidden",
+    visibleCount !== 0
+  );
+
+}
+
+
+/* =========================================================
+   MODE
+========================================================= */
+
+function openMode(name) {
+
+  toast(
+    name +
+    "을 시작합니다."
+  );
+
+}
+
+
+/* =========================================================
+   PROFILE SHEET
+========================================================= */
+
+function openProfileSheet(type) {
+
+  const modal =
+    document.getElementById(
+      "sheetModal"
+    );
+
+
+  const content =
+    document.getElementById(
+      "sheetContent"
+    );
+
+
+  /* =====================================================
+     ANALYTICS
+  ===================================================== */
+
+  if (type === "analytics") {
+
+    content.innerHTML = `
+
+      <p
+        class="
+          text-[11px]
+          text-sub
+          font-bold
+        "
+      >
+        MY ANALYTICS
+      </p>
+
+
+      <h2
+        class="
+          text-[22px]
+          font-bold
+          mt-1
+        "
+      >
+        진단분석
+      </h2>
+
+
+      <p
+        class="
+          text-[12px]
+          text-sub
+          mt-2
+        "
+      >
+        단순 정답률뿐 아니라,
+        반복적으로 실수하는
+        잠재적 약점까지 확인합니다.
+      </p>
+
+
+      <div
+        class="
+          mt-5
+          rounded-2xl
+          bg-bg
+          p-4
+        "
+      >
+
+        <div
+          class="
+            flex
+            justify-between
+            text-[12px]
+            mb-2
+          "
+        >
+
+          <span class="font-bold">
+            재무회계
+          </span>
+
+          <b class="text-blueDeep">
+            85%
+          </b>
+
+        </div>
+
+
+        <div
+          class="
+            h-2
+            rounded-full
+            progress-track
+          "
+        >
+
+          <div
+            class="
+              h-full
+              w-[85%]
+              bg-blue
+              rounded-full
+            "
+          ></div>
+
+        </div>
+
+
+        <div
+          class="
+            flex
+            justify-between
+            text-[12px]
+            mt-4
+            mb-2
+          "
+        >
+
+          <span class="font-bold">
+            세법
+          </span>
+
+          <b class="text-[#D85B62]">
+            40%
+          </b>
+
+        </div>
+
+
+        <div
+          class="
+            h-2
+            rounded-full
+            progress-track
+          "
+        >
+
+          <div
+            class="
+              h-full
+              w-[40%]
+              bg-[#D85B62]
+              rounded-full
+            "
+          ></div>
+
+        </div>
+
+
+        <div
+          class="
+            flex
+            justify-between
+            text-[12px]
+            mt-4
+            mb-2
+          "
+        >
+
+          <span class="font-bold">
+            상법
+          </span>
+
+          <b class="text-blueDeep">
+            72%
+          </b>
+
+        </div>
+
+
+        <div
+          class="
+            h-2
+            rounded-full
+            progress-track
+          "
+        >
+
+          <div
+            class="
+              h-full
+              w-[72%]
+              bg-blue
+              rounded-full
+            "
+          ></div>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="
+          mt-3
+          rounded-2xl
+          bg-[#EFF4FC]
+          p-4
+        "
+      >
+
+        <p
+          class="
+            font-bold
+            text-[13px]
+          "
+        >
+          잠재적 약점 발견
+        </p>
+
+
+        <p
+          class="
+            text-[11px]
+            text-sub
+            leading-relaxed
+            mt-1
+          "
+        >
+          현재 정답률은 보통이지만,
+          부가가치세의 특정 concept에서
+          반복적인 실수가 나타나고 있어요.
+        </p>
+
+      </div>
+
+
+      <button
+        onclick="
+          closeSheet();
+          toast('진단 상세 리포트를 준비합니다.')
+        "
+        class="
+          w-full
+          mt-4
+          py-3.5
+          rounded-xl
+          bg-navy
+          text-white
+          text-[12px]
+          font-bold
+        "
+      >
+        상세 분석 보기
+      </button>
+
+    `;
+
+  }
+
+
+  /* =====================================================
+     STRATEGY
+  ===================================================== */
+
+  else {
+
+    content.innerHTML = `
+
+      <p
+        class="
+          text-[11px]
+          text-sub
+          font-bold
+        "
+      >
+        STUDY STRATEGY
+      </p>
+
+
+      <h2
+        class="
+          text-[22px]
+          font-bold
+          mt-1
+        "
+      >
+        전략 수정
+      </h2>
+
+
+      <p
+        class="
+          text-[12px]
+          text-sub
+          mt-2
+        "
+      >
+        시험에서 반드시
+        맞혀야 할 영역과
+        학습 우선순위를 조정하세요.
+      </p>
+
+
+      <div
+        class="
+          mt-5
+          space-y-2
+        "
+      >
+
+
+        <div
+          class="
+            rounded-2xl
+            border border-line
+            p-4
+            flex
+            justify-between
+          "
+        >
+
+          <div>
+
+            <b class="text-[13px]">
+              반드시 맞힐 영역
+            </b>
+
+            <p
+              class="
+                text-[10px]
+                text-sub
+                mt-1
+              "
+            >
+              재무회계 핵심 concept
+            </p>
+
+          </div>
+
+          <i
+            class="
+              ph-fill
+              ph-check-circle
+              text-blueDeep
+              text-xl
+            "
+          ></i>
+
+        </div>
+
+
+        <div
+          class="
+            rounded-2xl
+            border border-line
+            p-4
+            flex
+            justify-between
+          "
+        >
+
+          <div>
+
+            <b class="text-[13px]">
+              보완 영역
+            </b>
+
+            <p
+              class="
+                text-[10px]
+                text-sub
+                mt-1
+              "
+            >
+              세법 · 부가가치세
+            </p>
+
+          </div>
+
+          <i
+            class="
+              ph-fill
+              ph-arrow-circle-up
+              text-[#D85B62]
+              text-xl
+            "
+          ></i>
+
+        </div>
+
+
+        <div
+          class="
+            rounded-2xl
+            border border-line
+            p-4
+            flex
+            justify-between
+          "
+        >
+
+          <div>
+
+            <b class="text-[13px]">
+              반복 회독
+            </b>
+
+            <p
+              class="
+                text-[10px]
+                text-sub
+                mt-1
+              "
+            >
+              말문제 중심
+            </p>
+
+          </div>
+
+          <i
+            class="
+              ph-fill
+              ph-repeat
+              text-navy
+              text-xl
+            "
+          ></i>
+
+        </div>
+
+      </div>
+
+
+      <button
+        onclick="
+          closeSheet();
+          toast('학습 전략이 저장되었습니다.')
+        "
+        class="
+          w-full
+          mt-4
+          py-3.5
+          rounded-xl
+          bg-blueDeep
+          text-white
+          text-[12px]
+          font-bold
+        "
+      >
+        전략 저장
+      </button>
+
+    `;
+
+  }
+
+
+  modal.classList.add(
+    "show"
+  );
+
+}
+
+
+/* =========================================================
+   CLOSE SHEET
+========================================================= */
+
+function closeSheet(event) {
+
+  const modal =
+    document.getElementById(
+      "sheetModal"
+    );
+
+
+  if (
+    !event ||
+    event.target === modal
+  ) {
+
+    modal.classList.remove(
+      "show"
+    );
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>

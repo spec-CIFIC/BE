@@ -36,21 +36,30 @@ X-Session-Token: {sessionToken}
   ├── "처음 이용해요" (입문자 플로우 — /intro/*)
   │     1. POST /api/v1/intro/sessions → sessionToken 발급
   │     2. localStorage에 'cific_session_token' 키로 저장
-  │     3. POST /api/v1/intro/self-diagnosis → 약점 과목 선택 저장
-  │     4. GET /api/v1/intro/questions → 진단 문제 10개 수신
-  │     5. POST /api/v1/intro/attempts × N → 익명 풀이 제출
-  │     6. GET /api/v1/intro/report → 약점 리포트 확인
-  │     7. 회원가입 → Supabase Auth
-  │     8. POST /api/v1/auth/merge → 데이터 병합 (X-Session-Token + Bearer)
-  │     9. localStorage에서 'cific_session_token' 삭제
-  │     10. 대시보드 이동
+  │     3. POST /api/v1/intro/subject { subjectId } → 시험 과목 선택 (선행)
+  │        └ 선택 과목을 localStorage 'cific_selected_subject_id'에 함께 저장
+  │     4. GET /api/v1/intro/concepts → 선택 과목의 개념 목록 수신
+  │     5. POST /api/v1/intro/self-diagnosis → 약점 개념 선택 저장
+  │     6. GET /api/v1/intro/questions → 진단 문제 10개 수신
+  │     7. POST /api/v1/intro/attempts × N → 익명 풀이 제출
+  │     8. GET /api/v1/intro/report → 약점 리포트 확인
+  │     9. 회원가입 → Supabase Auth
+  │     10. POST /api/v1/auth/register { subjectId } → 3에서 고른 과목 그대로 전달
+  │     11. POST /api/v1/auth/merge → 데이터 병합 (X-Session-Token + Bearer)
+  │     12. localStorage에서 세션·과목 키 삭제
+  │     13. 대시보드 이동
   │
   └── "기존 회원이에요 / 회원가입"
         1. Supabase Auth 로그인 or 회원가입
         2. (신규) POST /api/v1/auth/register { subjectId } → BE 회원 레코드 생성
+           (직접 가입은 회원가입 화면에서 과목을 직접 선택)
         3. accessToken으로 API 호출
         4. 대시보드 이동
 ```
+
+> **과목(subject) 처리 정책 (A안)**: 익명 단계에서 선택한 과목은 `ANON_SESSION.subjectId`에 저장되고,
+> FE가 이 값을 기억했다가 회원가입 시 `POST /auth/register`의 `subjectId`로 그대로 전달한다.
+> `merge`는 풀이기록 연결만 담당하며 과목을 옮기지 않는다. `USER.subjectId`는 NOT NULL 유지.
 
 ---
 
@@ -65,6 +74,26 @@ const { sessionToken, expiresAt } = await post('/api/v1/intro/sessions')
 localStorage.setItem('cific_session_token', sessionToken)
 ```
 
+#### `POST /api/v1/intro/subject`
+```ts
+// 시험 과목 선택 → 세션에 저장. 개념/문제 조회보다 선행. 204 No Content.
+await post('/api/v1/intro/subject',
+  { subjectId: 1 },
+  { headers: { 'X-Session-Token': sessionToken } }
+)
+localStorage.setItem('cific_selected_subject_id', String(1))
+```
+
+#### `GET /api/v1/intro/concepts`
+```ts
+// 선택한 과목의 개념 목록 조회 (약점 선택 UI용).
+// 과목 미선택 상태로 호출하면 400 SUBJECT_REQUIRED.
+const concepts = await get('/api/v1/intro/concepts', {
+  headers: { 'X-Session-Token': sessionToken }
+})
+// concepts: [{ id, conceptName }]
+```
+
 #### `POST /api/v1/intro/self-diagnosis`
 ```ts
 // 약점 개념 선택 후 저장. 204 No Content 반환.
@@ -76,7 +105,8 @@ await post('/api/v1/intro/self-diagnosis',
 
 #### `GET /api/v1/intro/questions`
 ```ts
-// 자가진단 기반 진단 문제 10개 조회. answerIndex 미포함.
+// 자가진단 기반 진단 문제 조회. answerIndex 미포함.
+// 약점 미선택 시 선택 과목의 전체 개념에서 출제된다.
 const questions = await get('/api/v1/intro/questions', {
   headers: { 'X-Session-Token': sessionToken }
 })
@@ -140,15 +170,190 @@ if (sessionToken) {
 
 ---
 
-## 4. localStorage 키 목록
+## 4. 홈화면 복습 큐 진입 조건 (STUDY_PLAN)
+
+`GET /home` 응답에 `hasStudyPlan: boolean` 필드가 포함된다.
+FE는 이 값으로 홈화면 복습 큐 영역의 렌더링을 분기한다.
+
+```ts
+const { hasStudyPlan, reviewQueue, ... } = await get('/api/v1/home', ...)
+
+// hasStudyPlan === false → 주요 개념 등록 유도 UI
+// hasStudyPlan === true  → 정상 복습 큐 표시
+```
+
+| `hasStudyPlan` | 복습 큐 영역 표시 |
+|---|---|
+| `false` | "학습 전략을 세워볼까요? 주요 학습 개념을 먼저 등록해주세요." + 등록 버튼 |
+| `true` | 추천 복습 개념 수 + 다시 볼 오답 수 + 에빙하우스 기반 복습 큐 |
+
+등록 버튼 클릭 시 → `POST /api/v1/study-plan` 호출 화면으로 이동.
+
+---
+
+## 5. 홈화면 API (`GET /api/v1/home`)
+
+로그인 유저 전용. `Authorization: Bearer` 필요.
+
+### 응답 타입
+
+```ts
+type HomeResponse = {
+  user: {
+    name: string
+    streakCount: number
+  }
+  examGoal: {
+    examName: string
+    examDate: string  // "YYYY-MM-DD"
+    dDay: number      // 양수: D-n, 0: D-Day, 음수: 시험 지남
+  } | null            // 시험 목표 미설정 시 null
+  reviewQueue: {
+    reviewConceptCount: number  // 에빙하우스 복습 예정 개념 수
+    wrongNoteCount: number      // 복습 예정 오답노트 수
+  }
+  dailyStrategy: string   // 서버가 생성하는 오늘의 학습 전략 문구
+  hasStudyPlan: boolean   // 주요 개념 등록 여부 (복습 큐 렌더링 분기)
+}
+```
+
+### 예시 응답
+
+```json
+// 시험 목표 설정 + 주요 개념 등록된 경우
+{
+  "user": { "name": "정수혁", "streakCount": 5 },
+  "examGoal": { "examName": "CPA 1차", "examDate": "2026-11-01", "dDay": 67 },
+  "reviewQueue": { "reviewConceptCount": 3, "wrongNoteCount": 7 },
+  "dailyStrategy": "오늘 7개의 오답과 3개의 복습 예정 개념이 기다려요. 오답부터 해결해보세요.",
+  "hasStudyPlan": true
+}
+
+// 시험 목표 미설정 유저
+{
+  "user": { "name": "정수혁", "streakCount": 0 },
+  "examGoal": null,
+  "reviewQueue": { "reviewConceptCount": 0, "wrongNoteCount": 0 },
+  "dailyStrategy": "오늘 복습할 항목이 없어요. 새로운 문제에 도전해보세요!",
+  "hasStudyPlan": false
+}
+```
+
+### 렌더링 분기 요약
+
+| 필드 | 조건 | FE 처리 |
+|---|---|---|
+| `examGoal` | `null` | 시험 목표 설정 유도 UI |
+| `hasStudyPlan` | `false` | 주요 개념 등록 유도 UI (복습 큐 숨김) |
+| `reviewQueue` | 둘 다 0 | "새 문제에 도전해보세요" 상태 표시 |
+| `dailyStrategy` | 항상 존재 | 그대로 렌더링 |
+
+> 복습 큐 렌더링 분기 상세는 **[§4. 홈화면 복습 큐 진입 조건]** 참조.
+
+---
+
+## 6. 주요 개념 (STUDY_PLAN) 우선 노출 정책
+
+사용자가 집중하기로 선택한 concept은 `STUDY_PLAN`에 저장되며, 앱 전반에서 우선 노출된다.
+
+### 적용 화면별 동작
+
+| 화면 | BE 동작 | FE 처리 |
+|---|---|---|
+| 오늘의 복습 큐 | `/review/concepts` 응답에서 STUDY_PLAN concept이 먼저 정렬되어 내려옴 | 순서 그대로 렌더링 |
+| 단원 학습 | 개념 목록은 순서 변경 없음 | STUDY_PLAN에 속한 concept에 별도 강조 표시 (예: 북마크 아이콘, 색상 구분) |
+| 오답노트 | `/review/wrongnotes` 응답에서 STUDY_PLAN concept의 오답노트가 먼저 정렬되어 내려옴 | 순서 그대로 렌더링 |
+
+### STUDY_PLAN 응답 형태
+
+각 API 응답의 concept/wrongnote 객체에 `isStudyPlan: boolean` 필드가 포함된다.
+FE는 이 값을 기준으로 단원 학습 화면에서 강조 표시 여부를 결정한다.
+
+### STUDY_PLAN 등록/해제
+
+```ts
+// 주요 개념 일괄 등록 (여러 개 선택 후 한 번에 저장). 이미 등록된 concept은 무시됨.
+// 존재하지 않는 conceptId 포함 시 404 STUDY_PLAN_CONCEPT_NOT_FOUND.
+// 응답: 201, 갱신된 전체 목록 { items: [{ conceptId, conceptName, createdAt }] }
+POST /api/v1/study-plan
+{ "conceptIds": [3, 5, 8] }
+
+// 주요 개념 해제. 등록되지 않은 concept이면 404 STUDY_PLAN_NOT_FOUND. 성공 시 204.
+DELETE /api/v1/study-plan/{conceptId}
+
+// 현재 주요 개념 목록 조회 → { items: [{ conceptId, conceptName, createdAt }] }
+GET /api/v1/study-plan
+```
+
+---
+
+## 6-1. 복습 화면 (`/review/*`)
+
+홈 "추천 복습" 섹션(에빙하우스 기반)의 두 카드가 각각 연결된다. 모두 `Authorization: Bearer` 필요.
+
+### `GET /api/v1/review/concepts` — 왼쪽 "다시 풀어볼 문제"
+
+```ts
+// 에빙하우스 복습 예정(nextReviewAt <= now) 개념 목록.
+// STUDY_PLAN 등록 concept이 먼저, 그다음 숙련도(score) 약한 순으로 정렬되어 내려온다.
+const concepts = await get('/api/v1/review/concepts', authHeader)
+// concepts: [{ conceptId, conceptName, score, nextReviewAt, isStudyPlan }]
+// → concept 선택 시 GET /review/wrongnotes?conceptId=... 로 드릴다운
+```
+
+### `GET /api/v1/review/wrongnotes` — 오른쪽 "다시 볼 오답"
+
+```ts
+// 복습 예정(reviewDueAt <= now) 오답노트. conceptId 쿼리로 특정 개념만 필터 가능.
+// STUDY_PLAN concept의 오답이 먼저 정렬된다. 문제 본문·정답·해설까지 포함(오버레이 바로 렌더).
+const notes = await get('/api/v1/review/wrongnotes?conceptId=3', authHeader)
+// notes: [{ wrongnoteId, questionId, conceptId, conceptName, stem, choices,
+//           answerIndex, userAnswer, explanation, mistakeType, userMemo,
+//           reviewDueAt, isStudyPlan }]
+// conceptId 생략 시 사용자의 전체 due 오답 반환 (FE가 concept으로 그룹핑 가능)
+```
+
+### `PATCH /api/v1/review/wrongnotes/{wrongnoteId}` — 코멘트 저장
+
+```ts
+// 오답노트 오버레이의 "코멘트 추가" → userMemo 저장/수정. 성공 시 204.
+// 본인 오답노트가 아니거나 없으면 404 WRONGNOTE_NOT_FOUND.
+await patch('/api/v1/review/wrongnotes/12', { userMemo: '선입선출법 기말재고 특성 재확인' }, authHeader)
+```
+
+### 오답노트 오버레이 UX (FE 렌더링 규칙)
+
+오답노트 상세는 **페이지 이동이 아니라 현재 화면 위에 뜨는 오버레이 모달**로 표시한다.
+
+- 우상단 **X**로 닫고 원래 화면으로 복귀 (라우팅 이동 아님).
+- 문제(`stem`·`choices`)를 먼저 보여주고, **"해설 및 정답 보기" 토글**로 `answerIndex`(정답)·`explanation`(해설)을 접었다 폈다 한다.
+- **"코멘트 추가"**는 `userMemo`이며 `PATCH /review/wrongnotes/{id}`로 저장한다.
+- 오버레이는 `GET /review/wrongnotes` 응답 항목을 그대로 쓴다(추가 상세 조회 불필요).
+
+### ⚠️ "다시 볼 오답" vs 하단바 "오답노트" 탭 — 진입점 2개, API 2개
+
+**오버레이 UI 컴포넌트는 두 화면이 공유하지만, 데이터를 가져오는 API는 다르다.** 혼용 금지.
+
+| 화면 | 데이터 범위 | API |
+|---|---|---|
+| 홈 "다시 볼 오답" 진입 | **복습 예정분만** (`reviewDueAt ≤ now`) | `GET /review/wrongnotes` (구현됨) |
+| 하단바 "오답노트" 탭 | **전체 오답노트** (기한 무관, 훑어보기) | 전체 목록용 별도 엔드포인트(예: `GET /wrongnotes`) — **미구현(추후)** |
+
+- 하단바 "오답노트" 탭에서 `GET /review/wrongnotes`를 호출하면 안 된다(복습 기한 지난 것만 나옴). 전체 목록 API가 준비되면 그것으로 연결한다.
+- 두 화면 모두 항목 클릭 시 위의 동일한 오버레이 컴포넌트를 띄운다.
+
+---
+
+## 7. localStorage 키 목록
 
 | 키 | 값 | 삭제 시점 |
 |---|---|---|
 | `cific_session_token` | 익명 세션 토큰 | merge 완료 후 |
+| `cific_selected_subject_id` | 입문자가 선택한 과목 id | merge 완료 후 |
 
 ---
 
-## 5. 에러 코드 처리
+## 8. 에러 코드 처리
 
 | 코드 | HTTP | FE 처리 |
 |---|---|---|
@@ -157,12 +362,16 @@ if (sessionToken) {
 | `INVALID_SESSION` | 401 | 존재하지 않는 세션 — 재발급 유도 |
 | `SESSION_EXPIRED` | 401 | 세션 만료 → 재발급 또는 회원가입 유도 |
 | `SESSION_ALREADY_MERGED` | 409 | 무시 (이미 병합됨) |
+| `SUBJECT_REQUIRED` | 400 | 과목 미선택 — 과목 선택 화면으로 이동 |
 | `QUESTION_NOT_FOUND` | 404 | "문제를 찾을 수 없습니다" 토스트 |
+| `STUDY_PLAN_CONCEPT_NOT_FOUND` | 404 | 등록 요청에 없는 개념 포함 — 목록 새로고침 후 재시도 |
+| `STUDY_PLAN_NOT_FOUND` | 404 | 이미 해제된 개념 — 목록 새로고침 |
+| `WRONGNOTE_NOT_FOUND` | 404 | "오답노트를 찾을 수 없습니다" 토스트 |
 | `INVALID_REQUEST` | 400 | 폼 유효성 오류 메시지 표시 |
 
 ---
 
-## 6. 공통 응답 형식
+## 9. 공통 응답 형식
 
 ```ts
 // 성공
@@ -179,10 +388,29 @@ if (sessionToken) {
 
 ---
 
-## 7. 개발 환경
+## 10. CORS 설정
+
+FE는 BE와 다른 오리진(포트)에서 동작하므로 BE에 CORS 허용이 필요하다.
+설정 위치: `app/main.py`의 `CORSMiddleware`.
+
+| 항목 | 값 |
+|---|---|
+| 허용 오리진 (로컬) | `http://localhost:8081` (Expo Web), `http://localhost:3000` |
+| 허용 메서드 | 전체 (`*`) |
+| 허용 헤더 | 전체 (`*`) — `Authorization`, `X-Session-Token` 포함 |
+| 자격증명 | `allow_credentials=True` |
+
+- CORS 미설정 시 브라우저 preflight(`OPTIONS`)가 `405`로 실패해 모든 API 호출이 막힌다.
+- **배포 시**: `allow_origins`에 실제 FE 도메인(AWS Amplify URL 등)을 추가한다. 와일드카드(`*`)는 `allow_credentials=True`와 함께 쓸 수 없으므로 오리진을 명시한다.
+- 네이티브 앱(iOS/Android)은 브라우저가 아니므로 CORS 대상이 아니다. 웹(Expo Web)에서만 적용된다.
+
+---
+
+## 11. 개발 환경
 
 | 항목 | 값 |
 |---|---|
 | BE 로컬 베이스 URL | `http://localhost:8000` |
+| FE 로컬 URL (Expo Web) | `http://localhost:8081` |
 | API prefix | `/api/v1` |
 | Swagger UI | `http://localhost:8000/docs` |

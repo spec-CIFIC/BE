@@ -19,9 +19,9 @@ DATABASE_URL = settings.DATABASE_URL
 # 앱 전체에서 하나만 만들어 재사용합니다 (싱글턴).
 #
 # create_async_engine : 비동기 방식으로 DB에 접속하는 엔진을 만듭니다.
-# echo=True           : 실행되는 SQL 쿼리를 콘솔에 출력합니다.
-#                       개발 중 디버깅에 유용하지만, 운영 시에는 False로 변경하세요.
-engine = create_async_engine(DATABASE_URL, echo=True)
+# echo=settings.SQL_ECHO : 실행 SQL 출력 여부를 설정으로 제어합니다.
+#                          기본 False(조용). 쿼리 디버깅 시 .env에 SQL_ECHO=true.
+engine = create_async_engine(DATABASE_URL, echo=settings.SQL_ECHO)
 
 
 # ─────────────────────────────────────────────────────────────

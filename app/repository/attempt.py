@@ -24,7 +24,9 @@ class AttemptRepository:
             durationMs=duration_ms,
         )
         self.db.add(attempt)
-        await self.db.commit()
+        # 커밋하지 않고 flush만 — 같은 요청 내 mastery/wrongnote 쓰기와 한 트랜잭션으로 묶기 위함.
+        # 커밋은 호출자(AttemptService.submit)가 마지막에 한 번만 수행한다.
+        await self.db.flush()
         await self.db.refresh(attempt)
         return attempt
 

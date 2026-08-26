@@ -13,6 +13,8 @@
 @.claude/plans/v2_reliability.md
 @.claude/plans/v3_flywheel.md
 
+> 시안(design/index_cific.html)과 현재 백엔드의 상이점 목록 → @.claude/design_gaps.md
+
 ---
 
 ## 프로젝트 개요
@@ -86,11 +88,50 @@
 | `USER` | 회원. `password`는 소셜 로그인 시 null, `provider`는 LOCAL/GOOGLE/KAKAO |
 | `ANON_SESSION` | 익명 세션. 로그인 시 `mergedUserId`로 병합 |
 | `ATTEMPT` | 풀이 기록. `userId`/`anonSessionId` 중 하나만 채워짐 |
-| `MASTERY` | 개념별 숙련도 점수 (0.0~1.0) + sampleSize |
-| `WRONGNOTE` | 오답노트. `mistakeType`(AI 판정), `reviewDueAt`(간격 반복) |
+| `MASTERY` | 개념별 숙련도 점수 (0.0~1.0) + sampleSize. attempt 제출마다 EMA(α=0.3)로 갱신 |
+| `WRONGNOTE` | 오답노트. `mistakeType`(AI 판정), `reviewDueAt`(에빙하우스 간격 반복) |
+| `STUDY_PLAN` | 사용자가 집중하기로 선택한 concept 목록. (userId, conceptId, createdAt) |
 
 `schemas.py`: HTTP 요청/응답용 Pydantic 모델 (외부용)
 `orm.py`: DB 테이블 구조 SQLAlchemy 모델 (내부용) — 둘은 역할이 다르므로 분리 유지.
+
+### STUDY_PLAN 설계 의도
+
+`STUDY_PLAN`은 사용자가 집중적으로 파고들 concept을 직접 선택해 저장하는 테이블이다.
+숙련도(MASTERY)는 시스템이 측정한 값이고, STUDY_PLAN은 사용자의 의도/전략이므로 분리한다.
+
+**STUDY_PLAN에 등록된 concept은 앱 전반에서 우선 노출된다:**
+
+| 화면 | 적용 방식 |
+|---|---|
+| 오늘의 복습 큐 (`GET /home`) | `reviewConceptCount` 집계 및 `/review/concepts` 응답에서 STUDY_PLAN concept 먼저 정렬 |
+| 단원 학습 | 개념 목록에서 STUDY_PLAN concept을 시각적으로 강조 (FE 처리) |
+| 오답노트 (`GET /review/wrongnotes`) | STUDY_PLAN에 속한 concept의 오답노트를 먼저 정렬 |
+
+### 복습 진입 구조 (홈 "추천 복습" — 에빙하우스 기반)
+
+홈 "추천 복습" 섹션의 두 카드가 각각 다른 스트림에 연결된다.
+
+- **왼쪽 "다시 풀어볼 문제"** → `GET /review/concepts`. **개념 복습을 에빙하우스로 스케줄**한다.
+  `MASTERY.nextReviewAt`(≤ now 또는 null)인 개념을 노출하며, attempt마다 정답이면 간격을 늘리고
+  (`reviewStage` +1) 오답이면 리셋한다. 간격: `[1,3,7,14,30]`일. 홈 `reviewConceptCount`도 이 기준.
+- **오른쪽 "다시 볼 오답"** → `GET /review/wrongnotes`. `WRONGNOTE.reviewDueAt`(≤ now) 기반(별도 에빙하우스).
+
+두 목록 모두 STUDY_PLAN concept을 먼저 정렬하고 각 항목에 `isStudyPlan`을 담는다.
+concept 선택 시 `GET /review/wrongnotes?conceptId=`로 드릴다운한다.
+
+### 오답노트 복습 UX 계약 (FE 오버레이)
+
+오답노트 상세는 **페이지 이동이 아니라 기존 화면 위 오버레이 모달**로 뜬다(우상단 X로 닫기).
+
+- 문제(stem·choices)를 먼저 보여주고, **"해설 및 정답 보기" 토글**로 `answerIndex`·`explanation`을 접었다 폈다 한다.
+- **"코멘트 추가" = `WRONGNOTE.userMemo`** → `PATCH /review/wrongnotes/{id}`로 저장한다.
+- `GET /review/wrongnotes` 응답이 문제 본문·정답·해설·userMemo까지 포함하므로 오버레이는 이 데이터를 바로 쓴다.
+
+**이 오버레이 UI 컴포넌트는 하단바 "오답노트" 탭과 공유하되, 데이터 API는 다르다.**
+복습 진입(`/review/wrongnotes`)은 복습 예정분(`reviewDueAt ≤ now`)만 내려주고, 하단바 "오답노트" 탭은
+전체 오답노트를 훑어보는 별도 화면이라 **전체 목록용 엔드포인트(예: `GET /wrongnotes`)가 따로 필요**하다.
+(이 전체 목록 API는 해당 탭 기능 개발 시점에 추가 — 지금은 미구현)
 
 ---
 

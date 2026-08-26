@@ -1,9 +1,12 @@
+from datetime import date, timedelta
 from typing import Optional
 
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.exception.constant.user import UserErrorCode
+from app.exception.exception import CificException
 from app.models.orm import User
 
 
@@ -27,8 +30,10 @@ class UserRepository:
         subject_id: int,
     ) -> User:
         # POST /auth/register — 회원가입 시 최초 1회 호출 (subjectId 필수)
-        # 동시 요청으로 같은 supabase_uid가 중복 INSERT되면 IntegrityError 발생
-        # → 충돌 시 이미 생성된 유저를 재조회해 반환 (TOCTOU 방어)
+        # IntegrityError 발생 케이스 두 가지:
+        #   (1) supabase_uid 충돌 — 동시 요청 TOCTOU. 이미 생성된 유저를 재조회해 반환.
+        #   (2) email 충돌 — 같은 이메일이 다른 uid로 이미 존재(예: Supabase 유저 삭제/재생성).
+        #       → uid 재조회 시 없으므로 EMAIL_ALREADY_EXISTS(409)로 명시적 처리.
         user = User(
             supabase_uid=supabase_uid,
             email=email,
@@ -45,7 +50,11 @@ class UserRepository:
             result = await self.db.execute(
                 select(User).where(User.supabase_uid == supabase_uid)
             )
-            user = result.scalar_one()
+            existing = result.scalar_one_or_none()
+            if existing is None:
+                # uid는 안 겹치는데 INSERT가 실패 → email unique 충돌로 간주
+                raise CificException(UserErrorCode.EMAIL_ALREADY_EXISTS)
+            user = existing
         return user
 
     async def update(self, user: User, fields: dict) -> User:
@@ -55,3 +64,15 @@ class UserRepository:
         await self.db.commit()
         await self.db.refresh(user)
         return user
+
+    async def update_streak(self, user: User) -> None:
+        # POST /attempts 제출 시 호출 — 오늘 첫 번째 풀이에서만 streak 갱신
+        today = date.today()
+        if user.lastStudiedAt == today:
+            return
+        if user.lastStudiedAt == today - timedelta(days=1):
+            user.streakCount += 1
+        else:
+            user.streakCount = 1
+        user.lastStudiedAt = today
+        await self.db.commit()

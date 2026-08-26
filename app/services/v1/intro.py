@@ -33,6 +33,16 @@ class IntroService:
     async def create_session(self) -> AnonSession:
         return await self.anon_session_repo.create()
 
+    async def select_subject(
+        self, session: AnonSession, subject_id: int
+    ) -> AnonSession:
+        return await self.anon_session_repo.set_subject(session, subject_id)
+
+    async def get_concepts(self, session: AnonSession) -> list:
+        if session.subjectId is None:
+            raise CificException(IntroErrorCode.SUBJECT_REQUIRED)
+        return await self.concept_repo.find_by_subject(session.subjectId)
+
     async def save_self_diagnosis(
         self, session: AnonSession, weak_concept_ids: list[int]
     ) -> AnonSession:
@@ -46,7 +56,12 @@ class IntroService:
             concept_ids = session.self_diagnosis.get("weakConceptIds", [])
 
         if not concept_ids:
-            concepts = await self.concept_repo.find_all()
+            # 약점 미선택 시: 선택 과목의 개념 전체를 대상으로 출제.
+            # 과목도 없으면(예외 흐름) 전체 개념으로 폴백.
+            if session.subjectId is not None:
+                concepts = await self.concept_repo.find_by_subject(session.subjectId)
+            else:
+                concepts = await self.concept_repo.find_all()
             concept_ids = [c.id for c in concepts]
 
         return await self.question_repo.find_approved_by_concepts(

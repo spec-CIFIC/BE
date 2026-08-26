@@ -21,3 +21,11 @@ class ConceptRepository:
         # GET /intro/questions 폴백 — 자가진단 없을 때 전체 개념 대상 문제 조회
         result = await self.db.execute(select(Concept))
         return list(result.scalars().all())
+
+    async def find_by_subject(self, subject_id: int) -> list[Concept]:
+        # GET /intro/concepts — 선택한 과목의 개념 목록(약점 선택용)
+        # GET /intro/questions 폴백 — 자가진단 없을 때 선택 과목 개념 대상 문제 조회
+        result = await self.db.execute(
+            select(Concept).where(Concept.subjectId == subject_id)
+        )
+        return list(result.scalars().all())

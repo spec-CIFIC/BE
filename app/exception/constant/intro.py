@@ -6,3 +6,4 @@ class IntroErrorCode(ErrorCode):
     INVALID_SESSION = (401, "INVALID_SESSION", "유효하지 않은 세션입니다.")
     SESSION_EXPIRED = (401, "SESSION_EXPIRED", "세션이 만료되었습니다.")
     SESSION_ALREADY_MERGED = (409, "SESSION_ALREADY_MERGED", "이미 병합된 세션입니다.")
+    SUBJECT_REQUIRED = (400, "SUBJECT_REQUIRED", "과목을 먼저 선택해주세요.")
