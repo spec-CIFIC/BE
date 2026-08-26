@@ -9,7 +9,7 @@
 
 from datetime import datetime, timezone
 
-from sqlalchemy import JSON, BigInteger, Boolean, Column, Date, DateTime, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import JSON, BigInteger, Boolean, Column, Date, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from app.db.database import Base
@@ -64,6 +64,7 @@ class Concept(Base):
     questions = relationship("Questions", back_populates="concept", lazy="selectin")
     masteries = relationship("Mastery", back_populates="concept", lazy="selectin")
     wrongnotes = relationship("Wrongnote", back_populates="concept", lazy="selectin")
+    study_plans = relationship("StudyPlan", back_populates="concept", lazy="selectin")
 
 
 # ─────────────────────────────────────────────────────────────
@@ -151,6 +152,7 @@ class User(Base):
     attempts = relationship("Attempt", back_populates="user", lazy="selectin")
     masteries = relationship("Mastery", back_populates="user", lazy="selectin")
     wrongnotes = relationship("Wrongnote", back_populates="user", lazy="selectin")
+    study_plans = relationship("StudyPlan", back_populates="user", lazy="selectin")
 
 
 # ─────────────────────────────────────────────────────────────
@@ -230,6 +232,12 @@ class Mastery(Base):
     # 진단 신뢰도 계산에 사용하는 표본 수 (풀이 기록 누적 횟수)
     sampleSize = Column(Integer, nullable=False)
 
+    # 에빙하우스 간격 반복 단계 (0부터 시작, 정답 시 +1 / 오답 시 0으로 리셋)
+    reviewStage = Column(Integer, nullable=False, default=0)
+
+    # 다음 복습 예정 시각 — GET /review/concepts는 nextReviewAt <= now(또는 null)인 개념을 노출
+    nextReviewAt = Column(DateTime(timezone=True), nullable=True)
+
     updatedAt = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     user = relationship("User", back_populates="masteries")
@@ -259,3 +267,22 @@ class Wrongnote(Base):
     user = relationship("User", back_populates="wrongnotes")
     attempt = relationship("Attempt", back_populates="wrongnotes")
     concept = relationship("Concept", back_populates="wrongnotes")
+
+
+# ─────────────────────────────────────────────────────────────
+# STUDY_PLAN (주요 개념)
+# ─────────────────────────────────────────────────────────────
+class StudyPlan(Base):
+    __tablename__ = "STUDY_PLAN"
+    # 같은 유저가 같은 concept을 중복 등록하지 못하도록 (userId, conceptId) 유니크 제약
+    __table_args__ = (
+        UniqueConstraint("userId", "conceptId", name="uq_study_plan_user_concept"),
+    )
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    userId = Column(BigInteger, ForeignKey("USER.id"), nullable=False)
+    conceptId = Column(BigInteger, ForeignKey("CONCEPT.id"), nullable=False)
+    createdAt = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
+
+    user = relationship("User", back_populates="study_plans")
+    concept = relationship("Concept", back_populates="study_plans")

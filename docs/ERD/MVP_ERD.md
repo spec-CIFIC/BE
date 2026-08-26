@@ -110,12 +110,14 @@ Table CONCEPT {
 }
 
 Table MASTERY {
-  id          bigint       [pk, increment]
-  userId      bigint       [not null, ref: > USER.id]
-  conceptId   bigint       [not null, ref: > CONCEPT.id]
-  score       float        [not null, note: '0~1 숙련도']
-  sampleSize  int          [not null, note: '표본 수, 진단 신뢰도용']
-  updatedAt   timestamptz  [not null]
+  id           bigint       [pk, increment]
+  userId       bigint       [not null, ref: > USER.id]
+  conceptId    bigint       [not null, ref: > CONCEPT.id]
+  score        float        [not null, note: '0~1 숙련도']
+  sampleSize   int          [not null, note: '표본 수, 진단 신뢰도용']
+  reviewStage  int          [not null, note: '에빙하우스 단계(정답 +1 / 오답 0)']
+  nextReviewAt timestamptz  [null, note: '다음 복습 예정 시각(간격 반복). /review/concepts due 기준']
+  updatedAt    timestamptz  [not null]
 }
 
 Table WRONGNOTE {
@@ -126,6 +128,17 @@ Table WRONGNOTE {
   mistakeType text         [null, note: '실수 유형: 잔존가치_누락 등 (AI 판정)']
   userMemo    text         [null, note: '사용자가 해당 문제에 직접 쓰는 메모']
   reviewDueAt timestamptz  [null, note: '복습 시점(간격 반복용)']
+}
+
+Table STUDY_PLAN {
+  id         bigint       [pk, increment]
+  userId     bigint       [not null, ref: > USER.id]
+  conceptId  bigint       [not null, ref: > CONCEPT.id]
+  createdAt  timestamptz  [not null]
+
+  indexes {
+    (userId, conceptId) [unique, name: 'uq_study_plan_user_concept']
+  }
 }
 ```
 

@@ -15,13 +15,18 @@ from app.repository.anon_session import AnonSessionRepository
 from app.repository.attempt import AttemptRepository
 from app.repository.concept import ConceptRepository
 from app.repository.home import HomeRepository
+from app.repository.mastery import MasteryRepository
 from app.repository.question import QuestionRepository
+from app.repository.study_plan import StudyPlanRepository
 from app.repository.subject import SubjectRepository
 from app.repository.user import UserRepository
+from app.repository.wrongnote import WrongnoteRepository
 from app.services.v1.attempt import AttemptService
 from app.services.v1.home import HomeService
 from app.services.v1.intro import IntroService
 from app.services.v1.question import QuestionService
+from app.services.v1.review import ReviewService
+from app.services.v1.study_plan import StudyPlanService
 from app.services.v1.subject import SubjectService
 from app.services.v1.user import UserService
 
@@ -65,11 +70,22 @@ def get_question_service(
     return QuestionService(repo)
 
 
+def get_mastery_repository(db: AsyncSession = Depends(get_db)) -> MasteryRepository:
+    return MasteryRepository(db)
+
+
+def get_wrongnote_repository(db: AsyncSession = Depends(get_db)) -> WrongnoteRepository:
+    return WrongnoteRepository(db)
+
+
 def get_attempt_service(
+    db: AsyncSession = Depends(get_db),
     attempt_repo: AttemptRepository = Depends(get_attempt_repository),
     question_repo: QuestionRepository = Depends(get_question_repository),
+    mastery_repo: MasteryRepository = Depends(get_mastery_repository),
+    wrongnote_repo: WrongnoteRepository = Depends(get_wrongnote_repository),
 ) -> AttemptService:
-    return AttemptService(attempt_repo, question_repo)
+    return AttemptService(db, attempt_repo, question_repo, mastery_repo, wrongnote_repo)
 
 
 def get_subject_service(
@@ -106,6 +122,26 @@ def get_home_service(
     user_repo: UserRepository = Depends(get_user_repository),
 ) -> HomeService:
     return HomeService(home_repo, user_repo)
+
+
+def get_study_plan_repository(db: AsyncSession = Depends(get_db)) -> StudyPlanRepository:
+    return StudyPlanRepository(db)
+
+
+def get_study_plan_service(
+    db: AsyncSession = Depends(get_db),
+    study_plan_repo: StudyPlanRepository = Depends(get_study_plan_repository),
+    concept_repo: ConceptRepository = Depends(get_concept_repository),
+) -> StudyPlanService:
+    return StudyPlanService(db, study_plan_repo, concept_repo)
+
+
+def get_review_service(
+    db: AsyncSession = Depends(get_db),
+    mastery_repo: MasteryRepository = Depends(get_mastery_repository),
+    wrongnote_repo: WrongnoteRepository = Depends(get_wrongnote_repository),
+) -> ReviewService:
+    return ReviewService(db, mastery_repo, wrongnote_repo)
 
 
 # ── 인증 의존성 ────────────────────────────────────────────────

@@ -41,6 +41,8 @@ alembic downgrade <revision_id>
 | `a1b2c3d4e5f6_add_subject_to_anon_session.py` | ANON_SESSION.subjectId 추가 (입문자 과목 선택 선행 단계 저장, FK→SUBJECT, nullable) |
 | `ccc6193aa22a_add_home_fields_to_user_and_question_type.py` | USER에 examName·examDate·streakCount·lastStudiedAt 추가, QUESTIONS에 questionType 추가 (홈화면 D-Day·streak·문제 유형 필터용) |
 | `faa3eb159683_refactor_question_type_add_is_ai_generated.py` | questionType 값 정리(GENERATED→CALCULATION, PAST_EXAM→CALCULATION), isAiGenerated Boolean 컬럼 추가 (문제 형식과 출처를 분리) |
+| `3815c50b15ea_add_study_plan_table.py` | STUDY_PLAN 테이블 추가 (사용자가 집중할 주요 개념 저장, (userId, conceptId) 유니크 제약) |
+| `d420f36493ed_add_ebbinghaus_schedule_to_mastery.py` | MASTERY에 reviewStage·nextReviewAt 추가 (개념 복습을 에빙하우스 간격 반복으로 스케줄, /review/concepts due 기준) |
 
 ## 주의 사항
 

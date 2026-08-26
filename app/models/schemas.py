@@ -177,6 +177,54 @@ class WrongnoteResponse(WrongnoteBase):
         from_attributes = True
 
 
+# ===== STUDY_PLAN (주요 개념) =====
+class StudyPlanCreateRequest(BaseModel):
+    """주요 개념 일괄 등록 요청"""
+    conceptIds: list[int]
+
+
+class StudyPlanItem(BaseModel):
+    conceptId: int
+    conceptName: str
+    createdAt: datetime
+
+
+class StudyPlanListResponse(BaseModel):
+    items: list[StudyPlanItem]
+
+
+# ===== REVIEW (복습) =====
+class ReviewConceptItem(BaseModel):
+    """GET /review/concepts — 에빙하우스 복습 예정 개념"""
+    conceptId: int
+    conceptName: str
+    score: float
+    nextReviewAt: Optional[datetime] = None
+    isStudyPlan: bool
+
+
+class ReviewWrongnoteItem(BaseModel):
+    """GET /review/wrongnotes — 문제 본문 포함 오답노트 항목"""
+    wrongnoteId: int
+    questionId: int
+    conceptId: int
+    conceptName: str
+    stem: str
+    choices: list[str]
+    answerIndex: int
+    userAnswer: int
+    explanation: Optional[str] = None
+    mistakeType: Optional[str] = None
+    userMemo: Optional[str] = None
+    reviewDueAt: Optional[datetime] = None
+    isStudyPlan: bool
+
+
+class WrongnoteMemoUpdateRequest(BaseModel):
+    """오답노트 코멘트(메모) 저장/수정 요청"""
+    userMemo: str
+
+
 # ===== INTRO (입문자 플로우) =====
 class IntroSessionResponse(BaseModel):
     sessionToken: str
@@ -267,6 +315,7 @@ class HomeResponse(BaseModel):
     examGoal: Optional[HomeExamGoal]
     reviewQueue: HomeReviewQueue
     dailyStrategy: str
+    hasStudyPlan: bool
 
 
 # ===== API 통합 응답 DTO =====
