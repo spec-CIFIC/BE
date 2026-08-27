@@ -15,12 +15,13 @@ async def get_questions(
     subject_id: Optional[int] = Query(None),
     concept_id: Optional[int] = Query(None),
     question_type: Optional[str] = Query(None),
+    source: Optional[str] = Query(None, description="past_exam: 기출문제만 조회"),
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
     _current_user: Optional[User] = Depends(get_optional_user),
     question_service: QuestionService = Depends(get_question_service),
 ):
-    return await question_service.list_questions(subject_id, concept_id, question_type, limit, offset)
+    return await question_service.list_questions(subject_id, concept_id, question_type, source, limit, offset)
 
 
 @router.get("/{question_id}", response_model=QuestionsResponse)
