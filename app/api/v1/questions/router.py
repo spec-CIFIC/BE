@@ -24,7 +24,7 @@ async def get_questions(
 
 
 @router.get("/{question_id}", response_model=QuestionsResponse)
-async def get_question(
+async def get_question_by_id(
     question_id: int,
     _current_user: Optional[User] = Depends(get_optional_user),
     question_service: QuestionService = Depends(get_question_service),

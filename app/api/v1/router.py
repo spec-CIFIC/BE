@@ -9,6 +9,7 @@ from app.api.v1.review.router import router as review_router
 from app.api.v1.study_plan.router import router as study_plan_router
 from app.api.v1.subjects.router import router as subjects_router
 from app.api.v1.users.router import router as users_router
+from app.api.v1.wrongnote.router import router as wrongnote_router
 
 api_router = APIRouter()
 
@@ -21,3 +22,4 @@ api_router.include_router(intro_router)
 api_router.include_router(home_router)
 api_router.include_router(study_plan_router)
 api_router.include_router(review_router)
+api_router.include_router(wrongnote_router)

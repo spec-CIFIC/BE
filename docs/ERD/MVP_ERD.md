@@ -33,7 +33,7 @@
 - `SUBJECT` 1 — N `ANON_SESSION` (입문자 선택 과목)
 - `ANON_SESSION` 1 — N `ATTEMPT`
 - `QUESTIONS` 1 — N `ATTEMPT`
-- `ATTEMPT` 1 — N `WRONGNOTE`
+- `QUESTIONS` 1 — N `WRONGNOTE`
 - `CONCEPT` 1 — N `MASTERY`, `WRONGNOTE`
 
 ## 핵심 설계 결정
@@ -121,13 +121,20 @@ Table MASTERY {
 }
 
 Table WRONGNOTE {
-  id          bigint       [pk, increment]
-  userId      bigint       [not null, ref: > USER.id]
-  attemptId   bigint       [not null, ref: > ATTEMPT.id]
-  conceptId   bigint       [not null, ref: > CONCEPT.id]
-  mistakeType text         [null, note: '실수 유형: 잔존가치_누락 등 (AI 판정)']
-  userMemo    text         [null, note: '사용자가 해당 문제에 직접 쓰는 메모']
-  reviewDueAt timestamptz  [null, note: '복습 시점(간격 반복용)']
+  id           bigint       [pk, increment]
+  userId       bigint       [not null, ref: > USER.id]
+  questionId   bigint       [not null, ref: > QUESTIONS.id, note: '문제 단위로 1 row. 재오답 시 reviewDueAt만 리셋']
+  conceptId    bigint       [not null, ref: > CONCEPT.id]
+  mistakeType  text         [null, note: '실수 유형: 잔존가치_누락 등 (AI 판정)']
+  userMemo     text         [null, note: '사용자가 해당 문제에 직접 쓰는 메모']
+  wrongCount   int          [not null, default: 1, note: '해당 문제를 틀린 누적 횟수. 오답 attempt마다 +1']
+  updatedAt    timestamptz  [not null, note: '마지막으로 틀린 시각. upsert 시 갱신. 오답노트 카드 날짜 표시용']
+  reviewDueAt  timestamptz  [null, note: '복습 시점(간격 반복용)']
+  isFavorited  boolean      [not null, default: false, note: '즐겨찾기 여부. PATCH /wrongnotes/{id}/favorite 로 토글']
+
+  indexes {
+    (userId, questionId) [unique, name: 'uq_wrongnote_user_question']
+  }
 }
 
 Table STUDY_PLAN {

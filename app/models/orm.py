@@ -111,6 +111,7 @@ class Questions(Base):
     subject = relationship("Subject", back_populates="questions")
     concept = relationship("Concept", back_populates="questions")
     attempts = relationship("Attempt", back_populates="question", lazy="selectin")
+    wrongnotes = relationship("Wrongnote", back_populates="question", lazy="selectin")
 
 
 # ─────────────────────────────────────────────────────────────
@@ -213,7 +214,6 @@ class Attempt(Base):
     user = relationship("User", back_populates="attempts", foreign_keys=[userId])
     anon_session = relationship("AnonSession", back_populates="attempts", foreign_keys=[anonSessionId])
     question = relationship("Questions", back_populates="attempts")
-    wrongnotes = relationship("Wrongnote", back_populates="attempt", lazy="selectin")
 
 
 # ─────────────────────────────────────────────────────────────
@@ -249,10 +249,13 @@ class Mastery(Base):
 # ─────────────────────────────────────────────────────────────
 class Wrongnote(Base):
     __tablename__ = "WRONGNOTE"
+    __table_args__ = (
+        UniqueConstraint("userId", "questionId", name="uq_wrongnote_user_question"),
+    )
 
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     userId = Column(BigInteger, ForeignKey("USER.id"), nullable=False)
-    attemptId = Column(BigInteger, ForeignKey("ATTEMPT.id"), nullable=False)
+    questionId = Column(BigInteger, ForeignKey("QUESTIONS.id"), nullable=False)
     conceptId = Column(BigInteger, ForeignKey("CONCEPT.id"), nullable=False)
 
     # AI가 판정한 실수 유형 (예: "잔존가치_누락", "이자율_혼동" 등)
@@ -264,8 +267,17 @@ class Wrongnote(Base):
     # 간격 반복 학습을 위한 복습 예정 시각
     reviewDueAt = Column(DateTime(timezone=True), nullable=True)
 
+    # 해당 문제를 틀린 누적 횟수 (오답 attempt마다 +1)
+    wrongCount = Column(Integer, nullable=False, default=1)
+
+    # 마지막으로 틀린 시각 (upsert 시 명시적으로 갱신 — onupdate 훅은 pg_insert에 미발동)
+    updatedAt = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
+
+    # 사용자가 즐겨찾기로 표시한 오답노트
+    isFavorited = Column(Boolean, nullable=False, default=False)
+
     user = relationship("User", back_populates="wrongnotes")
-    attempt = relationship("Attempt", back_populates="wrongnotes")
+    question = relationship("Questions", back_populates="wrongnotes")
     concept = relationship("Concept", back_populates="wrongnotes")
 
 

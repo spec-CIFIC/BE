@@ -189,13 +189,30 @@ BE/
 
 ---
 
+## Service / Repository 메서드 주석 원칙
+
+`app/services/` 및 `app/repository/` 하위 **모든 메서드**에는 다음을 주석으로 명시한다.
+
+- **어떤 엔드포인트(또는 시나리오)에서 호출되는지**
+- **파라미터가 여러 경우로 분기될 때 각 경우의 동작**
+
+```python
+# 예시 — service
+async def list_questions(...):
+    # GET /questions — 문제 목록 조회
+    # source: past_exam 지정 시 isAiGenerated=false(기출) 문제만 반환
+
+# 예시 — repository
+async def find_approved(...):
+    # GET /questions 목록 조회 — 과목·개념·유형·출처 필터 + 페이지네이션
+```
+
 ## Repository 관리 원칙
 
 `app/repository/` 하위 쿼리는 **기능 개발 시점에 함께 추가·수정**한다. 미래 기능을 위한 쿼리를 미리 작성하지 않는다.
 
 - 새 API가 추가될 때 필요한 쿼리가 없으면 해당 repository에 메서드를 추가한다
 - 기존 쿼리로 커버 가능하면 재사용하고, 변경이 필요하면 그때 수정한다
-- 쿼리 메서드에는 **어떤 시나리오에서 호출되는지** 주석으로 명시한다
 
 예시: 오답노트 API 개발 → `wrongnote.py` 추가 / 숙련도 조회 → `mastery.py` 추가
 
