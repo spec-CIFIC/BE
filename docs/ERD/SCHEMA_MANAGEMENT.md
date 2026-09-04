@@ -43,6 +43,10 @@ alembic downgrade <revision_id>
 | `faa3eb159683_refactor_question_type_add_is_ai_generated.py` | questionType 값 정리(GENERATED→CALCULATION, PAST_EXAM→CALCULATION), isAiGenerated Boolean 컬럼 추가 (문제 형식과 출처를 분리) |
 | `3815c50b15ea_add_study_plan_table.py` | STUDY_PLAN 테이블 추가 (사용자가 집중할 주요 개념 저장, (userId, conceptId) 유니크 제약) |
 | `d420f36493ed_add_ebbinghaus_schedule_to_mastery.py` | MASTERY에 reviewStage·nextReviewAt 추가 (개념 복습을 에빙하우스 간격 반복으로 스케줄, /review/concepts due 기준) |
+| `3aca6e71bca3_add_is_favorited_to_wrongnote.py` | WRONGNOTE에 isFavorited Boolean 추가 (즐겨찾기 ON/OFF, PATCH /review/wrongnotes/{id}/favorite) |
+| `d36265b34e19_refactor_wrongnote_replace_attemptid_.py` | WRONGNOTE.attemptId 제거 → questionId(FK→QUESTIONS) 추가, (userId, questionId) 유니크 제약 추가 (문제당 1 row upsert 구조로 변경) |
+| `02820a750686_add_wrong_count_to_wrongnote.py` | WRONGNOTE.wrongCount 추가 (오답 횟수 누적 카운터, upsert 시 +1) |
+| `ac2abe32eb91_add_updated_at_to_wrongnote.py` | WRONGNOTE.updatedAt 추가 (마지막으로 틀린 시각, upsert 시 명시 갱신) |
 
 ## 주의 사항
 

@@ -3,9 +3,8 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr
 
 
-# ==================== 요청/응답 DTO ====================
-
 # ===== SUBJECT (과목) =====
+
 class SubjectBase(BaseModel):
     subjectName: str
 
@@ -22,6 +21,7 @@ class SubjectResponse(SubjectBase):
 
 
 # ===== CONCEPT (개념) =====
+
 class ConceptBase(BaseModel):
     subjectId: int
     conceptName: str
@@ -39,6 +39,7 @@ class ConceptResponse(ConceptBase):
 
 
 # ===== QUESTIONS (문제) =====
+
 class QuestionsBase(BaseModel):
     subjectId: int
     conceptId: int
@@ -62,7 +63,23 @@ class QuestionsResponse(QuestionsBase):
         from_attributes = True
 
 
+class QuestionWithAttemptResponse(BaseModel):
+    """문제 풀이 응답"""
+    id: int
+    stem: str
+    choices: list[str]
+    answerIndex: int
+    explanation: Optional[str]
+    isCorrect: bool
+    attemptId: int
+    durationMs: Optional[int]
+
+    class Config:
+        from_attributes = True
+
+
 # ===== USER (사용자) =====
+
 class UserBase(BaseModel):
     email: EmailStr
     name: str
@@ -97,7 +114,20 @@ class UserResponse(UserBase):
         from_attributes = True
 
 
+class UserProgressResponse(BaseModel):
+    """사용자 진도 조회 응답"""
+    userId: int
+    subjectId: int
+    totalAttempts: int
+    correctCount: int
+    masteryScores: dict[int, float]  # conceptId: score
+
+    class Config:
+        from_attributes = True
+
+
 # ===== ANON_SESSION (익명 세션) =====
+
 class AnonSessionCreate(BaseModel):
     pass
 
@@ -114,6 +144,7 @@ class AnonSessionResponse(BaseModel):
 
 
 # ===== ATTEMPT (풀이 기록) =====
+
 class AttemptBase(BaseModel):
     questionId: int
     selectedIndex: int
@@ -137,6 +168,7 @@ class AttemptResponse(AttemptBase):
 
 
 # ===== MASTERY (숙련도) =====
+
 class MasteryBase(BaseModel):
     userId: int
     conceptId: int
@@ -157,9 +189,10 @@ class MasteryResponse(MasteryBase):
 
 
 # ===== WRONGNOTE (오답노트) =====
+
 class WrongnoteBase(BaseModel):
     userId: int
-    attemptId: int
+    questionId: int
     conceptId: int
     mistakeType: Optional[str] = None
     userMemo: Optional[str] = None
@@ -177,7 +210,56 @@ class WrongnoteResponse(WrongnoteBase):
         from_attributes = True
 
 
+class ReviewWrongnoteItem(BaseModel):
+    """GET /wrongnotes — 문제 본문 포함 오답노트 항목"""
+    wrongnoteId: int
+    questionId: int
+    subjectId: int
+    subjectName: str
+    conceptId: int
+    conceptName: str
+    stem: str
+    choices: list[str]
+    answerIndex: int
+    userAnswer: Optional[int] = None
+    explanation: Optional[str] = None
+    mistakeType: Optional[str] = None
+    userMemo: Optional[str] = None
+    reviewDueAt: Optional[datetime] = None
+    wrongCount: int
+    updatedAt: datetime
+    isStudyPlan: bool
+    isFavorited: bool
+
+
+class WrongnoteDetailResponse(BaseModel):
+    """오답노트 상세 조회 응답"""
+    wrongnoteId: int
+    questionId: int
+    stem: str
+    userAnswer: int
+    correctAnswer: int
+    mistakeType: Optional[str]
+    userMemo: Optional[str]
+    reviewDueAt: Optional[datetime]
+    concept: ConceptResponse
+
+    class Config:
+        from_attributes = True
+
+
+class WrongnoteMemoUpdateRequest(BaseModel):
+    """오답노트 코멘트(메모) 저장/수정 요청"""
+    userMemo: str
+
+
+class WrongnoteFavoriteUpdateRequest(BaseModel):
+    """오답노트 즐겨찾기 ON/OFF 요청"""
+    isFavorited: bool
+
+
 # ===== STUDY_PLAN (주요 개념) =====
+
 class StudyPlanCreateRequest(BaseModel):
     """주요 개념 일괄 등록 요청"""
     conceptIds: list[int]
@@ -194,6 +276,7 @@ class StudyPlanListResponse(BaseModel):
 
 
 # ===== REVIEW (복습) =====
+
 class ReviewConceptItem(BaseModel):
     """GET /review/concepts — 에빙하우스 복습 예정 개념"""
     conceptId: int
@@ -203,29 +286,8 @@ class ReviewConceptItem(BaseModel):
     isStudyPlan: bool
 
 
-class ReviewWrongnoteItem(BaseModel):
-    """GET /review/wrongnotes — 문제 본문 포함 오답노트 항목"""
-    wrongnoteId: int
-    questionId: int
-    conceptId: int
-    conceptName: str
-    stem: str
-    choices: list[str]
-    answerIndex: int
-    userAnswer: int
-    explanation: Optional[str] = None
-    mistakeType: Optional[str] = None
-    userMemo: Optional[str] = None
-    reviewDueAt: Optional[datetime] = None
-    isStudyPlan: bool
-
-
-class WrongnoteMemoUpdateRequest(BaseModel):
-    """오답노트 코멘트(메모) 저장/수정 요청"""
-    userMemo: str
-
-
 # ===== INTRO (입문자 플로우) =====
+
 class IntroSessionResponse(BaseModel):
     sessionToken: str
     expiresAt: datetime
@@ -294,6 +356,7 @@ class IntroReportResponse(BaseModel):
 
 
 # ===== HOME (홈화면) =====
+
 class HomeUserInfo(BaseModel):
     name: str
     streakCount: int
@@ -316,47 +379,3 @@ class HomeResponse(BaseModel):
     reviewQueue: HomeReviewQueue
     dailyStrategy: str
     hasStudyPlan: bool
-
-
-# ===== API 통합 응답 DTO =====
-class QuestionWithAttemptResponse(BaseModel):
-    """문제 풀이 응답"""
-    id: int
-    stem: str
-    choices: list[str]
-    answerIndex: int
-    explanation: Optional[str]
-    isCorrect: bool
-    attemptId: int
-    durationMs: Optional[int]
-
-    class Config:
-        from_attributes = True
-
-
-class UserProgressResponse(BaseModel):
-    """사용자 진도 조회 응답"""
-    userId: int
-    subjectId: int
-    totalAttempts: int
-    correctCount: int
-    masteryScores: dict[int, float]  # conceptId: score
-
-    class Config:
-        from_attributes = True
-
-
-class WrongnoteDetailResponse(BaseModel):
-    """오답노트 상세 조회 응답"""
-    wrongnoteId: int
-    questionId: int
-    stem: str
-    userAnswer: int
-    correctAnswer: int
-    mistakeType: Optional[str]
-    userMemo: Optional[str]
-    reviewDueAt: Optional[datetime]
-    concept: ConceptResponse
-
-    class Config:
-        from_attributes = True

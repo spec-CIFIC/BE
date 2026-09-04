@@ -29,6 +29,7 @@ from app.services.v1.review import ReviewService
 from app.services.v1.study_plan import StudyPlanService
 from app.services.v1.subject import SubjectService
 from app.services.v1.user import UserService
+from app.services.v1.wrongnote import WrongnoteService
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -86,6 +87,13 @@ def get_attempt_service(
     wrongnote_repo: WrongnoteRepository = Depends(get_wrongnote_repository),
 ) -> AttemptService:
     return AttemptService(db, attempt_repo, question_repo, mastery_repo, wrongnote_repo)
+
+
+def get_wrongnote_service(
+    db: AsyncSession = Depends(get_db),
+    wrongnote_repo: WrongnoteRepository = Depends(get_wrongnote_repository),
+) -> WrongnoteService:
+    return WrongnoteService(db, wrongnote_repo)
 
 
 def get_subject_service(

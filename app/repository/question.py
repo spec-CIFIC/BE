@@ -15,10 +15,11 @@ class QuestionRepository:
         subject_id: Optional[int],
         concept_id: Optional[int],
         question_type: Optional[str],
+        past_exam: bool,
         limit: int,
         offset: int,
     ) -> list[Questions]:
-        # GET /questions 목록 조회 — 과목·개념·유형 필터 + 페이지네이션
+        # GET /questions 목록 조회 — 과목·개념·유형·출처 필터 + 페이지네이션
         # order_by(id): ORDER BY 없으면 offset 기반 페이지네이션 결과가 비결정적
         stmt = select(Questions).where(Questions.status == "APPROVED")
         if subject_id is not None:
@@ -27,6 +28,8 @@ class QuestionRepository:
             stmt = stmt.where(Questions.conceptId == concept_id)
         if question_type is not None:
             stmt = stmt.where(Questions.questionType == question_type)
+        if past_exam:
+            stmt = stmt.where(Questions.isAiGenerated == False)  # noqa: E712
         stmt = stmt.order_by(Questions.id).offset(offset).limit(limit)
         result = await self.db.execute(stmt)
         return list(result.scalars().all())
