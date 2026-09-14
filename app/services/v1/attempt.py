@@ -42,5 +42,9 @@ class AttemptService:
         await self.mastery_repo.upsert(user.id, question.conceptId, is_correct)
         if not is_correct:
             await self.wrongnote_repo.upsert(user.id, question.id, question.conceptId)
+        else:
+            wrongnote = await self.wrongnote_repo.find_by_question(user.id, question.id)
+            if wrongnote:
+                await self.wrongnote_repo.advance_review(wrongnote)
         await self.db.commit()
         return attempt

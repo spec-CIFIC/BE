@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends
+from typing import Optional
+
+from fastapi import APIRouter, Depends, Query
 
 from app.api.deps import get_current_user, get_review_service
 from app.models.orm import User
-from app.models.schemas import ReviewConceptItem
+from app.models.schemas import ReviewConceptItem, ReviewWrongnoteItem
 from app.services.v1.review import ReviewService
 
 router = APIRouter(prefix="/review", tags=["review"])
@@ -15,3 +17,13 @@ async def list_review_concepts(
 ):
     """에빙하우스 복습 예정 개념 목록(STUDY_PLAN 먼저 → 숙련도 약한 순)."""
     return await review_service.list_review_concepts(current_user)
+
+
+@router.get("/wrongnotes", response_model=list[ReviewWrongnoteItem])
+async def list_review_wrongnotes(
+    concept_id: Optional[int] = Query(None),
+    current_user: User = Depends(get_current_user),
+    review_service: ReviewService = Depends(get_review_service),
+):
+    """에빙하우스 복습 예정 오답노트(reviewDueAt ≤ now). concept_id로 드릴다운 가능."""
+    return await review_service.list_review_wrongnotes(current_user, concept_id)

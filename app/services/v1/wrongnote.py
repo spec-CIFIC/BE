@@ -1,4 +1,3 @@
-from datetime import datetime, timezone
 from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -18,32 +17,6 @@ class WrongnoteService:
     ):
         self.db = db
         self.wrongnote_repo = wrongnote_repo
-
-    async def list_wrongnotes(
-        self, user: User, concept_id: Optional[int]
-    ) -> list[ReviewWrongnoteItem]:
-        # GET /wrongnotes — 복습 예정 오답노트 (문제 본문 포함, concept_id로 필터 가능)
-        now = datetime.now(timezone.utc)
-        rows = await self.wrongnote_repo.find_due(user.id, now, concept_id)
-        return [
-            ReviewWrongnoteItem(
-                wrongnoteId=row.id,
-                questionId=row.questionId,
-                conceptId=row.conceptId,
-                conceptName=row.conceptName,
-                stem=row.stem,
-                choices=row.choices,
-                answerIndex=row.answerIndex,
-                userAnswer=row.selectedIndex,
-                explanation=row.explanation,
-                mistakeType=row.mistakeType,
-                userMemo=row.userMemo,
-                reviewDueAt=row.reviewDueAt,
-                isStudyPlan=bool(row.is_study_plan),
-                isFavorited=bool(row.isFavorited),
-            )
-            for row in rows
-        ]
 
     async def list_all_wrongnotes(
         self,
