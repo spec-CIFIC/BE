@@ -14,7 +14,9 @@ class QuestionService:
 
     async def list_questions(
         self,
-        subject_id: Optional[int],
+        # subject_id: Optional[int],
+        # concept은 이미 subject 하위 도메인이므로 concept_id 지정 시 subject_id는 중복.
+        # 과목 단위로 문제를 조회하는 화면(subject_id 단독 사용)이 현재 없어 일단 비활성화.
         concept_id: Optional[int],
         filter: Optional[str],
         limit: int,
@@ -29,7 +31,7 @@ class QuestionService:
         # verbal: 기출 중 말문제만 / past_exam: 기출 전범위(말+계산)
         question_type = "VERBAL" if filter == "verbal" else None
         past_exam = filter is not None
-        return await self.repo.find_approved(subject_id, concept_id, question_type, past_exam, limit, offset)
+        return await self.repo.find_approved(concept_id, question_type, past_exam, limit, offset)
 
     async def get_question(self, question_id: int) -> Questions:
         # GET /questions/{id} — 문제 단건 조회

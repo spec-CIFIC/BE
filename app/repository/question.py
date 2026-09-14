@@ -12,18 +12,18 @@ class QuestionRepository:
 
     async def find_approved(
         self,
-        subject_id: Optional[int],
+        # subject_id: Optional[int],
+        # concept은 이미 subject 하위 도메인이므로 concept_id 지정 시 subject_id는 중복.
+        # 과목 단위로 문제를 조회하는 화면(subject_id 단독 사용)이 현재 없어 일단 비활성화.
         concept_id: Optional[int],
         question_type: Optional[str],
         past_exam: bool,
         limit: int,
         offset: int,
     ) -> list[Questions]:
-        # GET /questions 목록 조회 — 과목·개념·유형·출처 필터 + 페이지네이션
+        # GET /questions 목록 조회 — 개념·유형·출처 필터 + 페이지네이션
         # order_by(id): ORDER BY 없으면 offset 기반 페이지네이션 결과가 비결정적
         stmt = select(Questions).where(Questions.status == "APPROVED")
-        if subject_id is not None:
-            stmt = stmt.where(Questions.subjectId == subject_id)
         if concept_id is not None:
             stmt = stmt.where(Questions.conceptId == concept_id)
         if question_type is not None:
