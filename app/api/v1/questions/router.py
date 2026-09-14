@@ -12,7 +12,9 @@ router = APIRouter(prefix="/questions", tags=["questions"])
 
 @router.get("", response_model=list[QuestionsResponse])
 async def get_questions(
-    subject_id: Optional[int] = Query(None),
+    # subject_id: Optional[int] = Query(None),
+    # concept은 이미 subject 하위 도메인이므로 concept_id 지정 시 subject_id는 중복.
+    # 과목 단위로 문제를 조회하는 화면(subject_id 단독 사용)이 현재 없어 일단 비활성화.
     concept_id: Optional[int] = Query(None),
     filter: Optional[str] = Query(None, description="verbal: 말문제 특화 / past_exam: 전범위 기출"),
     limit: int = Query(20, ge=1, le=100),
@@ -20,7 +22,7 @@ async def get_questions(
     _current_user: Optional[User] = Depends(get_optional_user),
     question_service: QuestionService = Depends(get_question_service),
 ):
-    return await question_service.list_questions(subject_id, concept_id, filter, limit, offset)
+    return await question_service.list_questions(concept_id, filter, limit, offset)
 
 
 @router.get("/{question_id}", response_model=QuestionsResponse)
