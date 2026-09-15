@@ -65,6 +65,41 @@ X-Session-Token: {sessionToken}
 
 ## 3. API별 FE 사용법
 
+### 학습 기록 (`/attempts/*`)
+
+#### `GET /api/v1/attempts` — 학습 기록 목록
+
+```ts
+// 로그인 유저의 학습 기록을 최근순으로 조회. limit/offset 페이지네이션.
+const { items, total, limit, offset } = await get(
+  '/api/v1/attempts?limit=20&offset=0',
+  { headers: { Authorization: `Bearer ${accessToken}` } }
+)
+// items: [{
+//   attemptId, isCorrect, durationMs, createdAt,
+//   question: { id, stemPreview },   ← stem 최대 80자
+//   concept:  { id, conceptName },
+//   subject:  { id, subjectName }
+// }]
+```
+
+#### `GET /api/v1/attempts/{attemptId}` — 학습 기록 상세
+
+```ts
+// 특정 attempt 상세. 본인 attempt만 접근 가능.
+// 타인 attempt 또는 존재하지 않는 ID → 404 ATTEMPT_NOT_FOUND
+const detail = await get(
+  `/api/v1/attempts/${attemptId}`,
+  { headers: { Authorization: `Bearer ${accessToken}` } }
+)
+// detail: {
+//   attemptId, isCorrect, durationMs, selectedIndex, createdAt,
+//   question: { id, stem, choices, answerIndex, explanation },
+//   concept:  { id, conceptName },
+//   subject:  { id, subjectName }
+// }
+```
+
 ### 입문자 플로우 (`/intro/*`)
 
 #### `POST /api/v1/intro/sessions`
@@ -364,6 +399,7 @@ await patch('/api/v1/review/wrongnotes/12', { userMemo: '선입선출법 기말�
 | `SESSION_ALREADY_MERGED` | 409 | 무시 (이미 병합됨) |
 | `SUBJECT_REQUIRED` | 400 | 과목 미선택 — 과목 선택 화면으로 이동 |
 | `QUESTION_NOT_FOUND` | 404 | "문제를 찾을 수 없습니다" 토스트 |
+| `ATTEMPT_NOT_FOUND` | 404 | "학습 기록을 찾을 수 없습니다" 토스트 |
 | `STUDY_PLAN_CONCEPT_NOT_FOUND` | 404 | 등록 요청에 없는 개념 포함 — 목록 새로고침 후 재시도 |
 | `STUDY_PLAN_NOT_FOUND` | 404 | 이미 해제된 개념 — 목록 새로고침 |
 | `WRONGNOTE_NOT_FOUND` | 404 | "오답노트를 찾을 수 없습니다" 토스트 |
