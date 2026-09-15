@@ -38,6 +38,13 @@ class ConceptResponse(ConceptBase):
         from_attributes = True
 
 
+class ConceptListItem(BaseModel):
+    """GET /concepts — 단원학습 개념 목록 항목"""
+    conceptId: int
+    conceptName: str
+    isStudyPlan: bool
+
+
 # ===== QUESTIONS (문제) =====
 
 class QuestionsBase(BaseModel):
@@ -107,6 +114,7 @@ class UserResponse(UserBase):
     examName: Optional[str] = None
     examDate: Optional[date] = None
     streakCount: int = 0
+    weeklyAttemptCount: int = 0
     createdAt: datetime
     updatedAt: datetime
 

@@ -22,6 +22,7 @@ from app.repository.subject import SubjectRepository
 from app.repository.user import UserRepository
 from app.repository.wrongnote import WrongnoteRepository
 from app.services.v1.attempt import AttemptService
+from app.services.v1.concept import ConceptService
 from app.services.v1.home import HomeService
 from app.services.v1.intro import IntroService
 from app.services.v1.question import QuestionService
@@ -61,8 +62,9 @@ def get_subject_repository(db: AsyncSession = Depends(get_db)) -> SubjectReposit
 
 def get_user_service(
     repo: UserRepository = Depends(get_user_repository),
+    attempt_repo: AttemptRepository = Depends(get_attempt_repository),
 ) -> UserService:
-    return UserService(repo)
+    return UserService(repo, attempt_repo)
 
 
 def get_question_service(
@@ -110,6 +112,13 @@ def get_anon_session_repository(
 
 def get_concept_repository(db: AsyncSession = Depends(get_db)) -> ConceptRepository:
     return ConceptRepository(db)
+
+
+def get_concept_service(
+    concept_repo: ConceptRepository = Depends(get_concept_repository),
+    question_repo: QuestionRepository = Depends(get_question_repository),
+) -> ConceptService:
+    return ConceptService(concept_repo, question_repo)
 
 
 def get_intro_service(

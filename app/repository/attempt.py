@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from sqlalchemy import func, select
@@ -96,6 +97,15 @@ class AttemptRepository:
             .where(Attempt.id == attempt_id, Attempt.userId == user_id)
         )
         return (await self.db.execute(stmt)).one_or_none()
+
+    async def count_weekly_by_user(self, user_id: int) -> int:
+        # GET /users/me — 최근 7일간 로그인 사용자의 풀이 수
+        since = datetime.now(timezone.utc) - timedelta(days=7)
+        result = await self.db.execute(
+            select(func.count())
+            .where(Attempt.userId == user_id, Attempt.createdAt >= since)
+        )
+        return result.scalar_one()
 
     async def create_for_anon(
         self,

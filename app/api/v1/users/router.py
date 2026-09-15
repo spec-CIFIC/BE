@@ -9,8 +9,11 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.get("/me", response_model=UserResponse)
-async def get_my_profile(current_user: User = Depends(get_current_user)):
-    return current_user
+async def get_my_profile(
+    current_user: User = Depends(get_current_user),
+    user_service: UserService = Depends(get_user_service),
+):
+    return await user_service.get_profile(current_user)
 
 
 @router.patch("/me", response_model=UserResponse)

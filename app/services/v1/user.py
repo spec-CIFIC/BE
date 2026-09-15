@@ -1,13 +1,15 @@
 from app.exception.constant.common import CommonErrorCode
 from app.exception.exception import CificException
 from app.models.orm import User
-from app.models.schemas import UserUpdate
+from app.models.schemas import UserResponse, UserUpdate
+from app.repository.attempt import AttemptRepository
 from app.repository.user import UserRepository
 
 
 class UserService:
-    def __init__(self, repo: UserRepository):
+    def __init__(self, repo: UserRepository, attempt_repo: AttemptRepository):
         self.repo = repo
+        self.attempt_repo = attempt_repo
 
     async def get_from_token(self, payload: dict) -> User:
         supabase_uid = payload.get("sub")
@@ -15,6 +17,13 @@ class UserService:
         if not user:
             raise CificException(CommonErrorCode.UNAUTHORIZED)
         return user
+
+    async def get_profile(self, user: User) -> UserResponse:
+        # GET /users/me — 프로필 조회 (weeklyAttemptCount 포함)
+        weekly_count = await self.attempt_repo.count_weekly_by_user(user.id)
+        return UserResponse.model_validate(
+            {**user.__dict__, "weeklyAttemptCount": weekly_count}
+        )
 
     async def register(self, payload: dict, subject_id: int) -> User:
         supabase_uid = payload.get("sub")
@@ -27,5 +36,7 @@ class UserService:
             subject_id=subject_id,
         )
 
-    async def update_profile(self, user: User, body: UserUpdate) -> User:
-        return await self.repo.update(user, body.model_dump(exclude_none=True))
+    async def update_profile(self, user: User, body: UserUpdate) -> UserResponse:
+        # PATCH /users/me — 프로필 수정 후 weeklyAttemptCount 포함 반환
+        updated = await self.repo.update(user, body.model_dump(exclude_none=True))
+        return await self.get_profile(updated)
