@@ -65,6 +65,32 @@ X-Session-Token: {sessionToken}
 
 ## 3. API별 FE 사용법
 
+### 단원학습 (`/concepts/*`)
+
+#### `GET /api/v1/concepts` — 개념 목록
+
+```ts
+// 로그인 유저의 과목(USER.subjectId) 기반 개념 목록.
+// STUDY_PLAN 등록 개념 먼저, 각 그룹 내 가나다순 정렬.
+const concepts = await get(
+  '/api/v1/concepts',
+  { headers: { Authorization: `Bearer ${accessToken}` } }
+)
+// concepts: [{ conceptId, conceptName, isStudyPlan }]
+// isStudyPlan: true인 항목을 FE에서 시각적으로 강조
+```
+
+#### `GET /api/v1/concepts/{conceptId}/questions` — 개념별 문제 목록
+
+```ts
+// 특정 개념의 전체 문제 (AI 생성 + 기출 구분 없이 반환).
+// isAiGenerated 값으로 FE에서 구분 표시.
+const questions = await get(
+  `/api/v1/concepts/${conceptId}/questions?limit=20&offset=0`
+)
+// questions: [{ id, stem, choices, answerIndex, explanation, questionType, isAiGenerated, ... }]
+```
+
 ### 학습 기록 (`/attempts/*`)
 
 #### `GET /api/v1/attempts` — 학습 기록 목록

@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.orm import Concept
+from app.models.orm import Concept, StudyPlan
 
 
 class ConceptRepository:
@@ -29,3 +29,23 @@ class ConceptRepository:
             select(Concept).where(Concept.subjectId == subject_id)
         )
         return list(result.scalars().all())
+
+    async def find_by_subject_with_study_plan(
+        self, user_id: int, subject_id: int
+    ) -> list[tuple]:
+        # GET /concepts — 유저 과목 개념 목록 (STUDY_PLAN 우선 + 가나다 정렬)
+        stmt = (
+            select(
+                Concept.id,
+                Concept.conceptName,
+                StudyPlan.id.isnot(None).label("is_study_plan"),
+            )
+            .outerjoin(
+                StudyPlan,
+                (StudyPlan.conceptId == Concept.id) & (StudyPlan.userId == user_id),
+            )
+            .where(Concept.subjectId == subject_id)
+            .order_by(StudyPlan.id.is_(None), Concept.conceptName.asc())
+        )
+        result = await self.db.execute(stmt)
+        return list(result.all())

@@ -3,12 +3,8 @@ from datetime import datetime, timedelta, timezone
 from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.constants import EMA_ALPHA, REVIEW_INTERVALS_DAYS
 from app.models.orm import Concept, Mastery, StudyPlan
-
-EMA_ALPHA = 0.3
-
-# 에빙하우스 간격 반복: reviewStage별 다음 복습까지의 일 수
-REVIEW_INTERVALS_DAYS = [1, 3, 7, 14, 30]
 
 
 def _next_schedule(prev_stage: int, is_correct: bool) -> tuple[int, datetime]:

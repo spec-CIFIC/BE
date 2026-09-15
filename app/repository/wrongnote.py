@@ -5,9 +5,8 @@ from sqlalchemy import or_, select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.constants import REVIEW_INTERVALS_DAYS
 from app.models.orm import Attempt, Concept, Questions, StudyPlan, Subject, Wrongnote
-
-REVIEW_INTERVALS_DAYS = [1, 3, 7, 14, 30]
 
 
 def _next_interval_days(wrongnote: Wrongnote) -> int:

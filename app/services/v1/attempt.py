@@ -1,5 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.constants import STEM_PREVIEW_LENGTH
+
 from app.exception.constant.attempt import AttemptErrorCode
 from app.exception.exception import CificException
 from app.models.orm import Attempt, User
@@ -71,7 +73,7 @@ class AttemptService:
                 createdAt=row.createdAt,
                 question=AttemptHistoryQuestionSummary(
                     id=row.questionId,
-                    stemPreview=row.stem[:80],
+                    stemPreview=row.stem[:STEM_PREVIEW_LENGTH],
                 ),
                 concept=AttemptHistoryConceptSummary(
                     id=row.conceptId,
