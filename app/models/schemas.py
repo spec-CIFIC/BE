@@ -167,6 +167,60 @@ class AttemptResponse(AttemptBase):
         from_attributes = True
 
 
+class AttemptHistoryQuestionSummary(BaseModel):
+    id: int
+    stemPreview: str
+
+
+class AttemptHistoryQuestionDetail(BaseModel):
+    id: int
+    stem: str
+    choices: list[str]
+    answerIndex: int
+    explanation: Optional[str]
+
+
+class AttemptHistoryConceptSummary(BaseModel):
+    id: int
+    conceptName: str
+
+
+class AttemptHistorySubjectSummary(BaseModel):
+    id: int
+    subjectName: str
+
+
+class AttemptHistoryItem(BaseModel):
+    """GET /attempts — 학습 기록 목록 항목"""
+    attemptId: int
+    isCorrect: bool
+    durationMs: Optional[int]
+    createdAt: datetime
+    question: AttemptHistoryQuestionSummary
+    concept: AttemptHistoryConceptSummary
+    subject: AttemptHistorySubjectSummary
+
+
+class AttemptHistoryListResponse(BaseModel):
+    """GET /attempts — 페이지네이션 메타 포함"""
+    items: list[AttemptHistoryItem]
+    total: int
+    limit: int
+    offset: int
+
+
+class AttemptHistoryDetail(BaseModel):
+    """GET /attempts/{attempt_id} — 학습 기록 상세"""
+    attemptId: int
+    isCorrect: bool
+    durationMs: Optional[int]
+    selectedIndex: int
+    createdAt: datetime
+    question: AttemptHistoryQuestionDetail
+    concept: AttemptHistoryConceptSummary
+    subject: AttemptHistorySubjectSummary
+
+
 # ===== MASTERY (숙련도) =====
 
 class MasteryBase(BaseModel):

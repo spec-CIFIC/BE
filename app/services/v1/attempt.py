@@ -3,7 +3,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.exception.constant.attempt import AttemptErrorCode
 from app.exception.exception import CificException
 from app.models.orm import Attempt, User
-from app.models.schemas import AttemptBase
+from app.models.schemas import (
+    AttemptBase,
+    AttemptHistoryConceptSummary,
+    AttemptHistoryDetail,
+    AttemptHistoryItem,
+    AttemptHistoryListResponse,
+    AttemptHistoryQuestionDetail,
+    AttemptHistoryQuestionSummary,
+    AttemptHistorySubjectSummary,
+)
 from app.repository.attempt import AttemptRepository
 from app.repository.mastery import MasteryRepository
 from app.repository.question import QuestionRepository
@@ -48,3 +57,63 @@ class AttemptService:
                 await self.wrongnote_repo.advance_review(wrongnote)
         await self.db.commit()
         return attempt
+
+    async def list_attempts(
+        self, user: User, limit: int, offset: int
+    ) -> AttemptHistoryListResponse:
+        # GET /attempts — 로그인 사용자의 학습 기록 목록 (최근순, 페이지네이션)
+        rows, total = await self.attempt_repo.find_all_by_user(user.id, limit, offset)
+        items = [
+            AttemptHistoryItem(
+                attemptId=row.id,
+                isCorrect=row.isCorrect,
+                durationMs=row.durationMs,
+                createdAt=row.createdAt,
+                question=AttemptHistoryQuestionSummary(
+                    id=row.questionId,
+                    stemPreview=row.stem[:80],
+                ),
+                concept=AttemptHistoryConceptSummary(
+                    id=row.conceptId,
+                    conceptName=row.conceptName,
+                ),
+                subject=AttemptHistorySubjectSummary(
+                    id=row.subjectId,
+                    subjectName=row.subjectName,
+                ),
+            )
+            for row in rows
+        ]
+        return AttemptHistoryListResponse(
+            items=items, total=total, limit=limit, offset=offset
+        )
+
+    async def get_attempt_detail(
+        self, user: User, attempt_id: int
+    ) -> AttemptHistoryDetail:
+        # GET /attempts/{attempt_id} — 본인 attempt 상세 (타인 접근 → 404로 존재 여부 미노출)
+        row = await self.attempt_repo.find_by_id_with_question(attempt_id, user.id)
+        if row is None:
+            raise CificException(AttemptErrorCode.ATTEMPT_NOT_FOUND)
+        return AttemptHistoryDetail(
+            attemptId=row.id,
+            isCorrect=row.isCorrect,
+            durationMs=row.durationMs,
+            selectedIndex=row.selectedIndex,
+            createdAt=row.createdAt,
+            question=AttemptHistoryQuestionDetail(
+                id=row.questionId,
+                stem=row.stem,
+                choices=row.choices,
+                answerIndex=row.answerIndex,
+                explanation=row.explanation,
+            ),
+            concept=AttemptHistoryConceptSummary(
+                id=row.conceptId,
+                conceptName=row.conceptName,
+            ),
+            subject=AttemptHistorySubjectSummary(
+                id=row.subjectId,
+                subjectName=row.subjectName,
+            ),
+        )

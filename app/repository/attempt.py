@@ -1,6 +1,9 @@
+from typing import Optional
+
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.orm import Attempt
+from app.models.orm import Attempt, Concept, Questions, Subject
 
 
 class AttemptRepository:
@@ -29,6 +32,70 @@ class AttemptRepository:
         await self.db.flush()
         await self.db.refresh(attempt)
         return attempt
+
+    async def find_all_by_user(
+        self, user_id: int, limit: int, offset: int
+    ) -> tuple[list, int]:
+        # GET /attempts — 로그인 사용자의 학습 기록 최근순 목록 (페이지네이션)
+        count_stmt = (
+            select(func.count())
+            .where(Attempt.userId == user_id)
+            .select_from(Attempt)
+        )
+        total = (await self.db.execute(count_stmt)).scalar_one()
+
+        stmt = (
+            select(
+                Attempt.id,
+                Attempt.isCorrect,
+                Attempt.durationMs,
+                Attempt.createdAt,
+                Questions.id.label("questionId"),
+                Questions.stem,
+                Concept.id.label("conceptId"),
+                Concept.conceptName,
+                Subject.id.label("subjectId"),
+                Subject.subjectName,
+            )
+            .join(Questions, Questions.id == Attempt.questionId)
+            .join(Concept, Concept.id == Questions.conceptId)
+            .join(Subject, Subject.id == Questions.subjectId)
+            .where(Attempt.userId == user_id)
+            .order_by(Attempt.createdAt.desc())
+            .offset(offset)
+            .limit(limit)
+        )
+        rows = list((await self.db.execute(stmt)).all())
+        return rows, total
+
+    async def find_by_id_with_question(
+        self, attempt_id: int, user_id: int
+    ) -> Optional[tuple]:
+        # GET /attempts/{attempt_id} — 소유자 검증 포함 단건 상세
+        # Attempt.userId == user_id 조건으로 타인 attempt는 None 반환 → ATTEMPT_NOT_FOUND 처리
+        stmt = (
+            select(
+                Attempt.id,
+                Attempt.isCorrect,
+                Attempt.durationMs,
+                Attempt.selectedIndex,
+                Attempt.createdAt,
+                Questions.id.label("questionId"),
+                Questions.stem,
+                Questions.choices,
+                Questions.answerIndex,
+                Questions.explanation,
+                Concept.id.label("conceptId"),
+                Concept.conceptName,
+                Subject.id.label("subjectId"),
+                Subject.subjectName,
+            )
+            .join(Questions, Questions.id == Attempt.questionId)
+            .join(Concept, Concept.id == Questions.conceptId)
+            .join(Subject, Subject.id == Questions.subjectId)
+            .where(Attempt.id == attempt_id, Attempt.userId == user_id)
+        )
+        return (await self.db.execute(stmt)).one_or_none()
 
     async def create_for_anon(
         self,
