@@ -1,3 +1,5 @@
+from datetime import date
+
 from app.exception.constant.common import CommonErrorCode
 from app.exception.exception import CificException
 from app.models.orm import User
@@ -19,10 +21,11 @@ class UserService:
         return user
 
     async def get_profile(self, user: User) -> UserResponse:
-        # GET /users/me — 프로필 조회 (weeklyAttemptCount 포함)
+        # GET /users/me — 프로필 조회 (weeklyAttemptCount, studyDays 포함)
         weekly_count = await self.attempt_repo.count_weekly_by_user(user.id)
+        study_days = (date.today() - user.createdAt.date()).days
         return UserResponse.model_validate(
-            {**user.__dict__, "weeklyAttemptCount": weekly_count}
+            {**user.__dict__, "weeklyAttemptCount": weekly_count, "studyDays": study_days}
         )
 
     async def register(self, payload: dict, subject_id: int) -> User:

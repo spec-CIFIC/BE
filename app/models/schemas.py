@@ -15,6 +15,7 @@ class SubjectCreate(SubjectBase):
 
 class SubjectResponse(SubjectBase):
     id: int
+    questionCount: int = 0
 
     class Config:
         from_attributes = True
@@ -115,6 +116,7 @@ class UserResponse(UserBase):
     examDate: Optional[date] = None
     streakCount: int = 0
     weeklyAttemptCount: int = 0
+    studyDays: int = 0
     createdAt: datetime
     updatedAt: datetime
 
