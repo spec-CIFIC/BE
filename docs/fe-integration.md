@@ -65,6 +65,85 @@ X-Session-Token: {sessionToken}
 
 ## 3. API별 FE 사용법
 
+### 과목 (`/subjects`)
+
+#### `GET /api/v1/subjects` — 과목 목록
+
+```ts
+// 인증 불필요. 전체 과목 목록과 각 과목의 승인된 문제 수를 반환.
+const subjects = await get('/api/v1/subjects')
+// subjects: [{ id, subjectName, questionCount }]
+```
+
+---
+
+### 프로필 (`/users/me`)
+
+#### `GET /api/v1/users/me` — 내 프로필 조회
+
+```ts
+// Authorization: Bearer 필요.
+const user = await get(
+  '/api/v1/users/me',
+  { headers: { Authorization: `Bearer ${accessToken}` } }
+)
+// user: {
+//   id, email, name, subjectId,
+//   provider,           // "LOCAL" | "GOOGLE" | "KAKAO" | null
+//   examName,           // 목표 시험명 (미설정 시 null)
+//   examDate,           // "YYYY-MM-DD" (미설정 시 null)
+//   streakCount,        // 연속 학습일 수
+//   weeklyAttemptCount, // 최근 7일 풀이 수
+//   studyDays,          // 가입일부터 오늘까지 누적 일수
+//   createdAt, updatedAt
+// }
+```
+
+#### `PATCH /api/v1/users/me` — 프로필 수정
+
+```ts
+// Authorization: Bearer 필요. 모든 필드 optional — 수정할 필드만 포함.
+const updated = await patch(
+  '/api/v1/users/me',
+  { name: '정수혁', examName: 'CPA 1차', examDate: '2026-11-01' },
+  { headers: { Authorization: `Bearer ${accessToken}` } }
+)
+// 응답: GET /users/me와 동일한 UserResponse
+```
+
+---
+
+### 문제 (`/questions`)
+
+#### `GET /api/v1/questions` — 문제 목록
+
+```ts
+// 인증 선택적 (비로그인도 가능).
+// concept_id 지정 시 해당 개념 문제만, filter로 특화 문제 추출.
+const questions = await get(
+  '/api/v1/questions?concept_id=3&filter=verbal&limit=20&offset=0'
+)
+// filter 값:
+//   "verbal"    → 말문제 특화 (questionType=VERBAL)
+//   "past_exam" → 전범위 기출 (isAiGenerated=false)
+//   생략 시 전체 반환
+//
+// questions: [{
+//   id, subjectId, conceptId, stem, choices,
+//   answerIndex,    // ⚠️ 정답 인덱스 포함 — 문제 풀이 전 FE에서 숨김 처리 필수
+//   explanation, questionType, isAiGenerated, createdAt
+// }]
+```
+
+#### `GET /api/v1/questions/{id}` — 문제 단건 조회
+
+```ts
+// 동일 스키마. 존재하지 않는 id → 404 QUESTION_NOT_FOUND.
+const question = await get(`/api/v1/questions/${questionId}`)
+```
+
+---
+
 ### 단원학습 (`/concepts/*`)
 
 #### `GET /api/v1/concepts` — 개념 목록
@@ -398,9 +477,9 @@ await patch('/api/v1/review/wrongnotes/12', { userMemo: '선입선출법 기말�
 | 화면 | 데이터 범위 | API |
 |---|---|---|
 | 홈 "다시 볼 오답" 진입 | **복습 예정분만** (`reviewDueAt ≤ now`) | `GET /review/wrongnotes` (구현됨) |
-| 하단바 "오답노트" 탭 | **전체 오답노트** (기한 무관, 훑어보기) | 전체 목록용 별도 엔드포인트(예: `GET /wrongnotes`) — **미구현(추후)** |
+| 하단바 "오답노트" 탭 | **전체 오답노트** (기한 무관, 훑어보기) | `GET /wrongnotes` (구현됨 — §12 참조) |
 
-- 하단바 "오답노트" 탭에서 `GET /review/wrongnotes`를 호출하면 안 된다(복습 기한 지난 것만 나옴). 전체 목록 API가 준비되면 그것으로 연결한다.
+- 하단바 "오답노트" 탭에서 `GET /review/wrongnotes`를 호출하면 안 된다(복습 기한 지난 것만 나옴). 전체 목록은 `GET /wrongnotes`로 연결한다.
 - 두 화면 모두 항목 클릭 시 위의 동일한 오버레이 컴포넌트를 띄운다.
 
 ---
@@ -476,3 +555,60 @@ FE는 BE와 다른 오리진(포트)에서 동작하므로 BE에 CORS 허용이 
 | FE 로컬 URL (Expo Web) | `http://localhost:8081` |
 | API prefix | `/api/v1` |
 | Swagger UI | `http://localhost:8000/docs` |
+
+---
+
+## 12. 전체 오답노트 탭 (`/wrongnotes`)
+
+하단바 "오답노트" 탭 전용. 복습 기한 무관하게 사용자의 **전체 오답노트**를 조회한다.
+복습 예정분만 내려주는 `GET /review/wrongnotes`와 혼용 금지.
+
+모두 `Authorization: Bearer` 필요.
+
+### `GET /api/v1/wrongnotes` — 전체 오답노트 목록
+
+```ts
+// q: 과목명·개념명·문제 텍스트 검색 (선택)
+// subjectId: 과목 필터 (선택)
+// isFavorited: 즐겨찾기 필터 (선택)
+const notes = await get(
+  '/api/v1/wrongnotes?subjectId=1&isFavorited=true',
+  { headers: { Authorization: `Bearer ${accessToken}` } }
+)
+// notes: [{
+//   wrongnoteId, questionId,
+//   subjectId, subjectName,
+//   conceptId, conceptName,
+//   stem, choices,
+//   answerIndex,    // 정답 인덱스
+//   userAnswer,     // 사용자가 선택한 인덱스 (null 가능)
+//   explanation, mistakeType, userMemo,
+//   reviewDueAt,    // 에빙하우스 복습 예정일 (null 가능)
+//   wrongCount,     // 누적 오답 횟수
+//   updatedAt,
+//   isStudyPlan,    // 주요 개념 등록 여부
+//   isFavorited     // 즐겨찾기 여부
+// }]
+```
+
+### `PATCH /api/v1/wrongnotes/{id}` — 코멘트 저장
+
+```ts
+// userMemo 저장/수정. 성공 시 204.
+// 본인 오답노트가 아니거나 없으면 404 WRONGNOTE_NOT_FOUND.
+await patch(`/api/v1/wrongnotes/${wrongnoteId}`,
+  { userMemo: '선입선출법 기말재고 특성 재확인' },
+  { headers: { Authorization: `Bearer ${accessToken}` } }
+)
+```
+
+### `PATCH /api/v1/wrongnotes/{id}/favorite` — 즐겨찾기 ON/OFF
+
+```ts
+// isFavorited true/false로 토글. 성공 시 204.
+// 본인 오답노트가 아니거나 없으면 404 WRONGNOTE_NOT_FOUND.
+await patch(`/api/v1/wrongnotes/${wrongnoteId}/favorite`,
+  { isFavorited: true },
+  { headers: { Authorization: `Bearer ${accessToken}` } }
+)
+```
